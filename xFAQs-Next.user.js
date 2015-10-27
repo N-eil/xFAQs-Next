@@ -19,134 +19,98 @@
 // Note: jQuery is provided by GameFAQs by default. I will be using it a lot in this code.
 if(jQuery)
 {
-    // The _SETTINGS_ Global
-    // Use this to store user settings.
-    if( localStorage.getItem("_SETTINGS_") != null )
-    {
-        var _SETTINGS_ = JSON.parse(localStorage.getItem("_SETTINGS_"));
-        var enableAMP = _SETTINGS_.settings[0].enableAMP;
-        var enablePopular = _SETTINGS_.settings[0].enablePopular;
-        var searchTopics = _SETTINGS_.settings[0].searchTopics;
-        var enableWebm = _SETTINGS_.settings[0].enableWebm;
-        var enableFilter = _SETTINGS_.settings[0].enableFilter;
-        var enableGifv = _SETTINGS_.settings[0].enableGifv;
-        var enableImages = _SETTINGS_.settings[0].enableImages;
-        var enableYoutube = _SETTINGS_.settings[0].enableYoutube;
-        var msgBelowLeftOfPost = _SETTINGS_.settings[0].msgBelowLeftOfPost;
-        var enableAvatars = _SETTINGS_.settings[0].enableAvatars;
-        var enableAccountSwitcher = _SETTINGS_.settings[0].enableAccountSwitcher;
-        var enableRotatingSigs = _SETTINGS_.settings[0].enableRotatingSigs;
-        var enableQuickTopic = _SETTINGS_.settings[0].enableQuickTopic;
+    function getSettings(){
+        // Returns a variable which contains user settings
+        var _SETTINGS_;
 
-        // Automatically import signatures from old xFAQs if they don't have any set here
-        if( _SETTINGS_.signatures.length === 1 && localStorage.getItem('sigList')) {
-            _SETTINGS_.signatures = JSON.parse(localStorage.getItem("sigList")).signatures;
-            localStorage.setItem("_SETTINGS_", JSON.stringify(_SETTINGS_));
-        }
+        if( localStorage.getItem("_SETTINGS_") != null ) { //Load existing settings from localStorage
+            _SETTINGS_ = JSON.parse(localStorage.getItem("_SETTINGS_"));
 
-        if (!(_SETTINGS_.signatures instanceof Array)) { //Some people had issues with signatures not being an array, not sure how that happened but this will restore it
-            _SETTINGS_.signatures = [
-                {
-                    "boards": [""],
-                    "accounts": [""],
-                    "signature": "powered by xfaqs"
-                }
-            ];
-            localStorage.setItem("_SETTINGS_", JSON.stringify(_SETTINGS_));
-        }
-
-        // Automatically convert old enableAvatars values to "left" and "right"
-        // to allow easy conversion from old xFAQs versions of the enableAvatars setting
-        switch (enableAvatars)
-        {
-            case "topLeft":
-            case "leftLeft":
-                _SETTINGS_.settings[0].enableAvatars = enableAvatars = "left";
+            // Automatically import signatures from old xFAQs if they don't have any set here
+            if( _SETTINGS_.signatures.length === 1 && localStorage.getItem('sigList')) {
+                _SETTINGS_.signatures = JSON.parse(localStorage.getItem("sigList")).signatures;
                 localStorage.setItem("_SETTINGS_", JSON.stringify(_SETTINGS_));
-                break;
+            }
 
-            case "topRight":
-                _SETTINGS_.settings[0].enableAvatars = enableAvatars = "right";
-                localStorage.setItem("_SETTINGS", JSON.stringify(_SETTINGS_));
-                break;
+            if (!(_SETTINGS_.signatures instanceof Array)) { //Some people had issues with signatures not being an array, not sure how that happened but this will restore it
+                _SETTINGS_.signatures = [
+                    {
+                        "boards": [""],
+                        "accounts": [""],
+                        "signature": "powered by xfaqs"
+                    }
+                ];
+                localStorage.setItem("_SETTINGS_", JSON.stringify(_SETTINGS_));
+            }
+
+            // Automatically convert old enableAvatars values to "left" and "right"
+            // to allow easy conversion from old xFAQs versions of the enableAvatars setting
+            switch (_SETTINGS_.settings[0].enableAvatars) {
+                case "topLeft":
+                case "leftLeft":
+                    _SETTINGS_.settings[0].enableAvatars = "left";
+                    localStorage.setItem("_SETTINGS_", JSON.stringify(_SETTINGS_));
+                    break;
+
+                case "topRight":
+                    _SETTINGS_.settings[0].enableAvatars = "right";
+                    localStorage.setItem("_SETTINGS", JSON.stringify(_SETTINGS_));
+                    break;
+            }
+        } else {  // First time user, create and store default settings in localStorage
+            _SETTINGS_ =
+            {
+                "settings": [
+                    {
+                        "enableAMP": false,
+                        "enablePopular": false,
+                        "searchTopics": false,
+                        "enableFilter": false,
+                        "enableWebm": false,
+                        "enableGifv": false,
+                        "enableImages": false,
+                        "enableYoutube": false,
+                        "msgBelowLeftOfPost": false,
+                        "enableAvatars": "disabled",
+                        "enableAccountSwitcher": false,
+                        "enableRotatingSigs": false,
+                        "enableQuickTopic": false
+                    }
+                ],
+                "highlight-groups": [
+                    {
+                        "groupName": "xFAQs Creator",
+                        "color": "#FFD9D9",
+                        "userNames": [ "Judgmenl" ]
+                    }
+                ],
+                "ignored-users": [],
+                "signatures": [
+                    {
+                        "boards": [""],
+                        "accounts": [""],
+                        "signature": "powered by xfaqs"
+                    }
+                ],
+                "accounts": []
+            };
+            localStorage.setItem("_SETTINGS_", JSON.stringify(_SETTINGS_));
         }
-    } else
-    {
-        var _SETTINGS_ =
-        {
-            "settings": [
-                {
-                    "enableAMP": false,
-                    "enablePopular": false,
-                    "searchTopics": false,
-                    "enableFilter": false,
-                    "enableWebm": false,
-                    "enableGifv": false,
-                    "enableImages": false,
-                    "enableYoutube": false,
-                    "msgBelowLeftOfPost": false,
-                    "enableAvatars": "disabled",
-                    "enableAccountSwitcher": false,
-                    "enableRotatingSigs": false,
-                    "enableQuickTopic": false
-                }
-            ],
-            "highlight-groups": [
 
-                {
-                    "groupName": "xFAQs Creator",
-                    "color": "#FFD9D9",
-                    "userNames": [ "Judgmenl" ]
-                }
-
-            ],
-
-            "ignored-users": [
-
-            ],
-
-            "signatures": [
-                {
-                    "boards": [""],
-                    "accounts": [""],
-                    "signature": "powered by xfaqs"
-                }
-            ],
-
-            "accounts": [
-
-            ]
-
-        };
-        localStorage.setItem("_SETTINGS_", JSON.stringify(_SETTINGS_));
-        var enableAMP = _SETTINGS_.settings[0].enableAMP;
-        var enablePopular = _SETTINGS_.settings[0].enablePopular;
-        var searchTopics = _SETTINGS_.settings[0].searchTopics;
-        var enableFilter = _SETTINGS_.settings[0].enableFilter;
-        var enableWebm = _SETTINGS_.settings[0].enableWebm;
-        var enableGifv = _SETTINGS_.settings[0].enableGifv;
-        var enableImages = _SETTINGS_.settings[0].enableImages;
-        var enableYoutube = _SETTINGS_.settings[0].enableYoutube;
-        var msgBelowLeftOfPost = _SETTINGS_.settings[0].msgBelowLeftOfPost;
-        var enableAvatars = _SETTINGS_.settings[0].enableAvatars;
-        var enableRotatingSigs = _SETTINGS_.settings[0].enableRotatingSigs;
-        var enableQuickTopic = _SETTINGS_.settings[0].enableQuickTopic;
-
+        return _SETTINGS_;
     }
 
-    // The "MASTER" user variable should be used in any case where you want the user's name.
-    // I forget how to get the "accurate" Username... There are a few ways to get it. Going to use the welcome class for now.
-    // This may be the incompatible one.
-    var _USER_ = $(".welcome").text().slice(0, - 1).replace(/ /g,"_");
+    var _SETTINGS_ = getSettings(); // All user settings are stored in _SETTINGS_
+    var _USER_ = $(".welcome").text().slice(0, - 1).replace(/ /g,"_"); // Use _USER_ whenever you need the user's username
     var upload_user = _USER_ + " "; // used by Avatars.
 
     // "Search Topics" At top of page
-    if(searchTopics)
+    if(_SETTINGS_.settings[0].searchTopics)
     {
         $(".board_nav").after($(".searchtopics").css('margin', '0'));
     }
 
-    if(enableImages)
+    if(_SETTINGS_.settings[0].enableImages)
     {
         $('.msg_body a[href$=".gif"], .msg_body a[href$=".jpg"], .msg_body a[href$=".png"], .msg_body a[href$=".bmp"], .msg_body a[href$=".jpeg"]')
         .each(function(index, value) {
@@ -156,22 +120,19 @@ if(jQuery)
             $(this).after(" <button id='tti-" + index +"' class='btn' style='padding-left:3px;padding-right:3px;padding-top:1px;padding-bottom:1px;'>" +
                             "<i class='icon icon-picture'></i></button><span id='tti-image-" + index + "'></span>");
 
-            $("#tti-image-" + index).css("max-width", width);
-
-            $("#tti-image-" + index).hide();
+            $("#tti-image-" + index).css("max-width", width).hide();
 
             $("#tti-" + index).click(function() {
                 $("#tti-image-" + index).html("<img id='tti-image-" + index + "' src='" + href + "' alt='TTI Image' style='display:block'>");
                 $("#tti-image-" + index).toggle();
 
             });
-
         });
 
     }
 
     // AMP on each page.
-    if(enableAMP)
+    if(_SETTINGS_.settings[0].enableAMP)
     {
         var ampURL = "http://www.gamefaqs.com/users/" + _USER_ + "/boards";
         if(ampURL)
@@ -189,13 +150,13 @@ if(jQuery)
         }
     }
 
-    if(enablePopular)
+    if(_SETTINGS_.settings[0].enablePopular)
     {
         $(".paginate.user > .unav").after("<li><a href='http://www.gamefaqs.com/boards/popular.php?'>Popular</a></li>");
     }
 
     // Webm
-    if(enableWebm)
+    if(_SETTINGS_.settings[0].enableWebm)
     {
         $('a[href$=".webm"], a[href$=".WebM"], a[href$=".webM"], a[href$=".webM"]').each(function(index, value)
         {
@@ -220,7 +181,7 @@ if(jQuery)
     }
 
     // Gifv
-    if(enableGifv)
+    if(_SETTINGS_.settings[0].enableGifv)
     {
         $('a[href$=".gifv"]').each(function(index, value)
         {
@@ -249,7 +210,7 @@ if(jQuery)
     }
 
     // Embedded Youtube
-    if(enableYoutube)
+    if(_SETTINGS_.settings[0].enableYoutube)
     {
         var ytregex = /(?:http|https|)(?::\/\/|)(?:www.|)(?:youtu\.be\/|youtube\.com(?:\/embed\/|\/v\/|\/watch\?v=|\/ytscreeningroom\?v=|\/feeds\/api\/videos\/|\/user\S*[^\w\-\s]|\S*[^\w\-\s]))([\w\-]{11})[a-z0-9;:@#?&%=+\/\$_.-]*/
         $('td.msg a').each(function(i, v){
@@ -266,7 +227,7 @@ if(jQuery)
     }
 
     // Message filtering
-    if(enableFilter) {
+    if(_SETTINGS_.settings[0].enableFilter) {
         function filterCallback(user) {
             return function() {
                 if($(".top").size() == 0)
@@ -300,7 +261,7 @@ if(jQuery)
     }
 
     // Quote, Edit, Delete, Report... In Left of Post
-    if(msgBelowLeftOfPost)
+    if(_SETTINGS_.settings[0].msgBelowLeftOfPost)
     {
         $(".msg_below").css("position", "relative");
         $(".msg_below").each(function(index){
@@ -317,7 +278,7 @@ if(jQuery)
     }
 
     // Render Avatars
-    if ( enableAvatars === "left")
+    if (_SETTINGS_.settings[0].enableAvatars === "left")
     {
         switch($(".msg_infobox").css("display"))
         {
@@ -346,7 +307,7 @@ if(jQuery)
                 break;
         }
     }
-    else if (enableAvatars === "right")
+    else if (_SETTINGS_.settings[0].enableAvatars === "right")
     {
         $(".msg_body").css("padding-right", "calc(" + (105 - parseInt($(".msg_body").css("margin-right"))) + "px + 0.5em)");
         $(".msg_infobox").css("clear", "both");
@@ -402,7 +363,7 @@ if(jQuery)
         }
     }
 
-    if(enableAccountSwitcher)
+    if(_SETTINGS_.settings[0].enableAccountSwitcher)
     {
         function loginClickHandler(i)
         {
@@ -883,7 +844,7 @@ if(jQuery)
     // End Avatars Stuff
 
     // Rotating sigs
-    if ( enableRotatingSigs ) {
+    if (_SETTINGS_.settings[0].enableRotatingSigs) {
         var sigList = _SETTINGS_.signatures;
         var board = $('.page-title').html().trim();
         if ( sigList ) {
@@ -972,7 +933,7 @@ if(jQuery)
     }
 
     // Quick Topic
-    if(enableQuickTopic) {
+    if(_SETTINGS_.settings[0].enableQuickTopic) {
         if($(".action").eq(0).text() == " New Topic") {
             var key;
             var postUrl = $(".action > a").attr("href");
