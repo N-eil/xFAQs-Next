@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         xFAQs-Next
 // @namespace    xfaqs
-// @version      0.1.6.3
+// @version      0.1.6.4
 // @description  xFAQs For the New Message Board Beta
 // @author       @Kraust / Judgmenl
 // @match        http://*.gamefaqs.com/*
@@ -53,6 +53,22 @@ if(jQuery)
                     }
             ];
 			localStorage.setItem("_SETTINGS_", JSON.stringify(_SETTINGS_));
+		}
+
+		// Automatically convert old enableAvatars values to "left" and "right"
+		// to allow easy conversion from old xFAQs versions of the enableAvatars setting
+		switch (enableAvatars)
+		{
+			case "topLeft":
+			case "leftLeft":
+				_SETTINGS_.settings[0].enableAvatars = enableAvatars = "left";
+				localStorage.setItem("_SETTINGS_", JSON.stringify(_SETTINGS_));
+				break;
+
+			case "topRight":
+				_SETTINGS_.settings[0].enableAvatars = enableAvatars = "right";
+				localStorage.setItem("_SETTINGS", JSON.stringify(_SETTINGS_));
+				break;
 		}
     } else
     {
@@ -301,23 +317,38 @@ if(jQuery)
     }
      
     // Render Avatars
-
-	if ( enableAvatars == "topLeft" ) {
-		$(".msg_body").css("padding-left", "115px");
-		$(".msg_infobox").css("clear", "both");
-		$(".msg_below").css("clear", "both");
-		$(".msg_body").each(function( index )
+	if ( enableAvatars === "left")
+	{
+		switch($(".msg_infobox").css("display"))
 		{
-			var post_user = $(".name").eq(index).text().slice(0, - 1).replace(/ /g,"_");
-			$(this).before("<div style='top:45px;padding:.5em;float:left'><img src='http://avatarfaqs.pcriot.com/avatars/" + post_user +".png' /></div>");
-		});
+			case "block": // Message Display Top
+				$(".msg_body").css("padding-left", "115px");
+				$(".msg_infobox").css("clear", "both");
+				$(".msg_below").css("clear", "both");
+				$(".msg_body").each(function( index )
+				{
+					var post_user = $(".name").eq(index).text().slice(0, - 1).replace(/ /g,"_");
+					$(this).before("<div style='top:45px;padding:.5em;float:left'><img src='http://avatarfaqs.pcriot.com/avatars/" + post_user +".png' /></div>");
+				});
 
-		$('img').error(function () {
-			$(this).hide();
-		});				
-	} else if (enableAvatars == "topRight" ) {		
+				$('img').error(function ()
+				{
+					$(this).hide();
+				});
+				break;
 
-		$(".msg_body").css("margin-right", "115px");
+			case "table-cell":
+				$(".msg_infobox").each(function( index )
+				{
+					var post_user = $(".name").eq(index).text().slice(0, - 1).replace(/ /g,"_");
+					$(".msg_infobox > .user").eq(index).after("<img src='http://avatarfaqs.pcriot.com/avatars/" + post_user +".png' />");
+				});
+				break;
+		}
+	}
+	else if (enableAvatars === "right")
+	{
+		$(".msg_body").css("padding-right", "calc(" + (105 - parseInt($(".msg_body").css("margin-right"))) + "px + 0.5em)");
 		$(".msg_infobox").css("clear", "both");
 		$(".msg_below").css("clear", "both");
 		$(".msg_body").each(function( index )
@@ -326,22 +357,12 @@ if(jQuery)
 			$(this).before("<div style='padding:.5em;float:right'><img src='http://avatarfaqs.pcriot.com/avatars/" + post_user +".png' /></div>");
 		});
 
-		$('img').error(function () {
+		$('img').error(function ()
+		{
 			$(this).hide();
 		});
-	} else if (enableAvatars == "leftLeft") {
-		
-		$(".msg_infobox").each(function( index )
-		{
-			var post_user = $(".name").eq(index).text().slice(0, - 1).replace(/ /g,"_");
-			$(".msg_infobox > .user").eq(index).after("<img src='http://avatarfaqs.pcriot.com/avatars/" + post_user +".png' />");
-		});
-	} else { // disabled
-
-
 	}
-			
-    // End Avatar Options
+	// End Avatar Options
      
     // Account Switcher
      
@@ -586,9 +607,8 @@ if(jQuery)
                                         "<tr><td style='width:50%'>quote, edit, ect. in Message Display Left <i class='icon icon-question-sign' title='Note: If this is enabled while in Message Display Above mode, things will look weird'></i></td><td><input type='checkbox' id='msgBelowLeftOfPost'></td></tr>" +
                                         "<tr><td style='width:50%'>GameFAQs Avatars</td><td>" + 
                                         "<select id='enableAvatars'><option value='disabled'>Disabled</option>" + 
-                                        "<option value='leftLeft'>Left (Message Display Left)</option>" +
-                                        "<option value='topLeft'>Left (Message Display Top)</option>" +
-                                        "<option value='topRight'>Right (Message Display Top)</option></select></td></tr>" +										
+                                        "<option value='left'>Left</option>" +
+                                        "<option value='right'>Right</option></select></td></tr>" +										
                                         "<tr><td style='width:50%'>Account Switcher</td><td><input type='checkbox' id='enableAccountSwitcher'></td></tr>" +
                                         "<tr><td style='width:50%'>Rotating Sigs</td><td><input type='checkbox' id='enableRotatingSigs'></td></tr>" +	
                                         "<tr><td style='width:50%'>Quick Topic</td><td><input type='checkbox' id='enableQuickTopic'></td></tr>" +																														
