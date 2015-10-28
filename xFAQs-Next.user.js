@@ -185,18 +185,32 @@ if(jQuery)
 
     // Embedded Youtube
     if(_SETTINGS_.settings[0].enableYoutube)
-    {
+        embedYoutube();
+
+    function embedYoutube() {
+        // https://xkcd.com/1171/
         var ytregex = /(?:http|https|)(?::\/\/|)(?:www.|)(?:youtu\.be\/|youtube\.com(?:\/embed\/|\/v\/|\/watch\?v=|\/ytscreeningroom\?v=|\/feeds\/api\/videos\/|\/user\S*[^\w\-\s]|\S*[^\w\-\s]))([\w\-]{11})[a-z0-9;:@#?&%=+\/\$_.-]*/
-        $('td.msg a').each(function(i, v){
-            if(ytregex.test($(this).attr('href'))) {
-                var id = ytregex.exec($(this).attr('href'))[1];
-                $(this).after(" <button id='yt-" + i +"' class='btn' style='padding-left:3px;padding-right:3px;padding-top:1px;padding-bottom:1px;'><i class='icon icon-play-circle'></i></button><div id='yt-image-" +
-                                i + "'><iframe width='720' height='480' src='http://www.youtube.com/embed/" + id + "' frameborder='0' allowfullscreen></iframe>");
-                $("#yt-image-" + i).hide();
-                $("#yt-" + i).click(function() {
-                    $("#yt-image-" + i).toggle();
-                });
-            }
+        var $buttonTemplate = $('<button class="btn" style="margin-left:5px;padding-left:3px;padding-right:3px;padding-top:1px;padding-bottom:1px;">' +
+                            '<i class="icon icon-play-circle"></i></button>');
+        var $videoTemplate = $('<div style="display:none"> <iframe width="720" height="480"frameborder="0" allowfullscreen></iframe> </div>');
+        $('td.msg a').each(function() {
+            if (!(ytregex.test($(this).attr('href'))))
+                return;
+            var id = ytregex.exec($(this).attr('href'))[1];
+            var $videoDiv = $videoTemplate.clone();
+            var $toggleButton = $buttonTemplate.clone().click(function() {
+                $videoDiv.toggle();
+                var videoControlMessage;
+                if ($videoDiv.find('iframe').is(':hidden'))
+                    videoControlMessage = 'pauseVideo';
+                else
+                    videoControlMessage = 'playVideo';
+                $videoDiv.find('iframe')[0].postMessage('{"event":"command","func":"' + videoControlMessage + '","args":""}', '*');
+            })
+            .one('click', function() { // Only set the source once to prevent videos from restarting when hidden and then reopened
+                $videoDiv.find('iframe').attr('src', 'http://www.youtube.com/embed/' + id);
+            });
+            $(this).after($videoDiv).after($toggleButton);
         });
     }
 
