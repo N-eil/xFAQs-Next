@@ -111,24 +111,23 @@ if(jQuery)
     }
 
     if(_SETTINGS_.settings[0].enableImages)
-    {
+        addTtiImages();
+
+    function addTtiImages() {
+        var $buttonTemplate = $("<button class='btn' style='margin-left:5px;padding-left:3px;padding-right:3px;padding-top:1px;padding-bottom:1px;'>" +
+                            "<i class='icon icon-picture'></i></button>");
+        var $ttiTemplate = $('<span style="display:none"><img alt="TTI Image" style="display:block"></span>');
+
         $('.msg_body a[href$=".gif"], .msg_body a[href$=".jpg"], .msg_body a[href$=".png"], .msg_body a[href$=".bmp"], .msg_body a[href$=".jpeg"]')
-        .each(function(index, value) {
+        .each(function() {
             var href = $(this).attr("href");
-            var width;
-
-            $(this).after(" <button id='tti-" + index +"' class='btn' style='padding-left:3px;padding-right:3px;padding-top:1px;padding-bottom:1px;'>" +
-                            "<i class='icon icon-picture'></i></button><span id='tti-image-" + index + "'></span>");
-
-            $("#tti-image-" + index).css("max-width", width).hide();
-
-            $("#tti-" + index).click(function() {
-                $("#tti-image-" + index).html("<img id='tti-image-" + index + "' src='" + href + "' alt='TTI Image' style='display:block'>");
-                $("#tti-image-" + index).toggle();
-
+            var $ttiSpan = $ttiTemplate.clone();
+            var $toggleButton = $buttonTemplate.clone().click(function() {
+                $ttiSpan.children('img').attr('src', href);
+                $ttiSpan.toggle();
             });
+            $(this).after($ttiSpan).after($toggleButton);
         });
-
     }
 
     // AMP on each page.
