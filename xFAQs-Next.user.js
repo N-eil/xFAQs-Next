@@ -104,9 +104,10 @@ if(jQuery)
     var _USER_ = $(".welcome").text().slice(0, - 1).replace(/ /g,"_"); // Use _USER_ whenever you need the user's username
     var upload_user = _USER_ + " "; // used by Avatars.
 
-    // "Search Topics" At top of page
     if(_SETTINGS_.settings[0].searchTopics)
-    {
+        addTopicSearchBar();
+
+    function addTopicSearchBar() {
         $(".board_nav").after($(".searchtopics").css('margin', '0'));
     }
 
@@ -131,9 +132,9 @@ if(jQuery)
     }
 
     if(_SETTINGS_.settings[0].enableAMP)
-        addAmpButton();
+        addAmpLink();
 
-    function addAmpButton() {
+    function addAmpLink() {
         var ampURL = "http://www.gamefaqs.com/users/" + _USER_ + "/boards";
         if(ampURL) {
             $.ajax({
@@ -144,12 +145,13 @@ if(jQuery)
                 var amp = $(response).find("#content > div > div > div > table > tbody:nth-child(3) > tr:nth-child(8) > td:nth-child(2)").text();
                 $(".paginate.user > .unav").after("<li><a href='http://www.gamefaqs.com/user/messages'>" + amp + " AMP</a></li>");
             });
-
         }
     }
 
     if(_SETTINGS_.settings[0].enablePopular)
-    {
+        addPopularLink();
+
+    function addPopularLink() {
         $(".paginate.user > .unav").after("<li><a href='http://www.gamefaqs.com/boards/popular.php?'>Popular</a></li>");
     }
 
