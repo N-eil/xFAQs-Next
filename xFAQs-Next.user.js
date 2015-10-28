@@ -117,17 +117,16 @@ if(jQuery)
     function addTtiImages() {
         var $buttonTemplate = $("<button class='btn' style='margin-left:5px;padding-left:3px;padding-right:3px;padding-top:1px;padding-bottom:1px;'>" +
                             "<i class='icon icon-picture'></i></button>");
-        var $ttiTemplate = $('<span style="display:none"><img alt="TTI Image" style="display:block"></span>');
+        var $ttiTemplate = $('<div style="display:none"><img alt="TTI Image"></div>');
 
-        $('.msg_body a[href$=".gif"], .msg_body a[href$=".jpg"], .msg_body a[href$=".png"], .msg_body a[href$=".bmp"], .msg_body a[href$=".jpeg"]')
-        .each(function() {
+        $('.msg_body a[href$=".gif"], .msg_body a[href$=".jpg"], .msg_body a[href$=".png"], .msg_body a[href$=".bmp"], .msg_body a[href$=".jpeg"]').each(function() {
             var href = $(this).attr("href");
-            var $ttiSpan = $ttiTemplate.clone();
+            var $ttiDiv = $ttiTemplate.clone();
             var $toggleButton = $buttonTemplate.clone().click(function() {
-                $ttiSpan.children('img').attr('src', href);
-                $ttiSpan.toggle();
+                $ttiDiv.children('img').attr('src', href);
+                $ttiDiv.toggle();
             });
-            $(this).after($ttiSpan).after($toggleButton);
+            $(this).after($ttiDiv).after($toggleButton);
         });
     }
 
@@ -155,57 +154,32 @@ if(jQuery)
         $(".paginate.user > .unav").after("<li><a href='http://www.gamefaqs.com/boards/popular.php?'>Popular</a></li>");
     }
 
-    // Webm
     if(_SETTINGS_.settings[0].enableWebm)
-    {
-        $('a[href$=".webm"], a[href$=".WebM"], a[href$=".webM"], a[href$=".webM"]').each(function(index, value)
-        {
-            var href = $(this).attr("href");
+        embedVideos('a[href$=".webm"], a[href$=".WebM"], a[href$=".webM"]');
 
-            $(this).after(" <button id='webm-" + index +"' class='btn' style='padding-left:3px;padding-right:3px;padding-top:1px;padding-bottom:1px'><i class='icon icon-play-circle'></i></button><div id='webm-image-" +
-                            index + "'><video controls><source src=\"" + href + "\" type=\'video/webm; codecs=\"vp8, vorbis\"\'></video></div>");
-
-            $("#webm-image-" + index).hide();
-
-            $("#webm-" + index).click(function()
-            {
-                $("#webm-image-" + index).toggle();
-                if( $("#webm-image-" + index + " > video").is(":hidden") )
-                {
-                    $("#webm-image-" + index + " > video").get(0).pause();
-                }
-
-            });
-
-        });
-    }
-
-    // Gifv
     if(_SETTINGS_.settings[0].enableGifv)
-    {
-        $('a[href$=".gifv"]').each(function(index, value)
-        {
-            var href = $(this).attr("href");
+        embedVideos('a[href$=".gifv"]');
 
-            $(this).after(" <button id='gifv-" + index +"' class='btn' style='padding-left:3px;padding-right:3px;padding-top:1px;padding-bottom:1px'><i class='icon icon-play-circle'></i></button><div id='gifv-image-" +
-                            index + "'><video controls loop autoplay><source src=\"" + href.replace(".gifv", ".webm") + "\" type=\'video/webm; codecs=\"vp8, vorbis\"\'></video></div>");
+    function embedVideos(selectors) {
+        var $buttonTemplate = $('<button class="btn" style="margin-left:5px;padding-left:3px;padding-right:3px;padding-top:1px;padding-bottom:1px;">' +
+                            '<i class="icon icon-play-circle"></i></button>');
+        var $videoTemplate = $('<div style="display:none"> <video controls loop autoplay> </video> </div>');
 
-            $("#gifv-image-" + index).hide();
-
-            $("#gifv-" + index).click(function()
-            {
-                $("#gifv-image-" + index).toggle();
-                if( $("#gifv-image-" + index + " > video").is(":hidden") )
-                {
-                    $("#gifv-image-" + index + " > video").get(0).pause();
-                }
+        $(selectors).each(function() {
+            var href = $(this).attr("href").replace('.gifv', '.webm');
+            var $videoDiv = $videoTemplate.clone();
+            var $toggleButton = $buttonTemplate.clone().click(function() {
+                $videoDiv.toggle();
+                if ($videoDiv.find('video').is(':hidden'))
+                    $videoDiv.find('video')[0].pause();
                 else
-                {
-                    $("#gifv-image-" + index + " > video").get(0).play();
-                }
+                    $videoDiv.find('video')[0].play();
 
+            })
+            .one('click', function() { // Only set the source once to prevent videos from restarting when hidden and then reopened
+                $videoDiv.find('video').attr('src', href);
             });
-
+            $(this).after($videoDiv).after($toggleButton);
         });
     }
 
