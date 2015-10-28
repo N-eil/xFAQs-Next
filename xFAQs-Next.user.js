@@ -227,7 +227,7 @@ if(jQuery)
                 $(".name:not(:contains('" + user + "'))").closest(".top").toggle().next().toggle();
         }
 
-        $(".message_num").after(function(i) {
+        $(".message_num").before(function(i) {
             var $span = $("<span class='postaction'> </span>");
             return $("<a href='#' class='filter-" + i + "'> filter </a>")
                 .appendTo($span)
@@ -237,14 +237,14 @@ if(jQuery)
 
     // Quote, Edit, Delete, Report... In Left of Post
     if(_SETTINGS_.settings[0].msgBelowLeftOfPost)
-    {
-        $(".msg_below").css("position", "relative");
-        $(".msg_below").each(function(index){
-            $(this).parent().prev().append($(this).detach());
-        });
+        moveMsgBelow();
 
-        $(".message_num").each(function(index){
-            $(this).parent().append($(this).detach());
+    function moveMsgBelow() {
+        if ($('.top').length)
+            return; // Don't move anything for message display top.  Potential TODO: Move msgBelow links into user info bar for message display top as well?
+
+        $(".msg_below").css("position", "relative").each(function() {
+            $(this).parent().prev().find('.message_num').before(this);
         });
 
         $(".edited").css("display", "block");
@@ -540,7 +540,7 @@ if(jQuery)
                                         "<tr><td style='width:50%'>Embedded Gifv</td><td><input type='checkbox' id='enableGifv'></td></tr>" +
                                         "<tr><td style='width:50%'>Embedded Images</td><td><input type='checkbox' id='enableImages'></td></tr>" +
                                         "<tr><td style='width:50%'>Embedded Youtube</td><td><input type='checkbox' id='enableYoutube'></td></tr>" +
-                                        "<tr><td style='width:50%'>quote, edit, ect. in Message Display Left <i class='icon icon-question-sign' title='Note: If this is enabled while in Message Display Above mode, things will look weird'></i></td><td><input type='checkbox' id='msgBelowLeftOfPost'></td></tr>" +
+                                        "<tr><td style='width:50%'>quote, edit, ect. in Message Display Left</td><td><input type='checkbox' id='msgBelowLeftOfPost'></td></tr>" +
                                         "<tr><td style='width:50%'>GameFAQs Avatars</td><td>" +
                                         "<select id='enableAvatars'><option value='disabled'>Disabled</option>" +
                                         "<option value='left'>Left</option>" +
