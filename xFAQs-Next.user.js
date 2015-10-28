@@ -37,6 +37,7 @@ if(jQuery)
         var enableAccountSwitcher = _SETTINGS_.settings[0].enableAccountSwitcher;
 		var enableRotatingSigs = _SETTINGS_.settings[0].enableRotatingSigs;
 		var enableQuickTopic = _SETTINGS_.settings[0].enableQuickTopic;
+		var enableHotkeys = _SETTINGS_.settings[0].enableHotkeys;
 		
 		// Automatically import signatures from old xFAQs if they don't have any set here
 		if( _SETTINGS_.signatures.length === 1 && localStorage.getItem('sigList')) {
@@ -88,7 +89,8 @@ if(jQuery)
                     "enableAvatars": "disabled",
                     "enableAccountSwitcher": false,
 					"enableRotatingSigs": false,
-					"enableQuickTopic": false
+					"enableQuickTopic": false,
+					"enableHotkeys": false
                 }
             ],
             "highlight-groups": [
@@ -131,6 +133,7 @@ if(jQuery)
         var enableAvatars = _SETTINGS_.settings[0].enableAvatars;
 		var enableRotatingSigs = _SETTINGS_.settings[0].enableRotatingSigs;
 		var enableQuickTopic = _SETTINGS_.settings[0].enableQuickTopic;
+		var enableHotkeys = _SETTINGS_.settings[0].enableHotkeys;
  
     }
      
@@ -599,7 +602,7 @@ if(jQuery)
                                         "<tr><td style='width:50%'>Popular Topics in Board Navigation</td><td><input type='checkbox' id='enablePopular'></td></tr>" +
                                         "<tr><td style='width:50%'>AMP in Board Navigation</td><td><input type='checkbox' id='enableAMP'></td></tr>" +
                                         "<tr><td style='width:50%'>\"Search Topics\" at top of topic list.</td><td><input type='checkbox' id='searchTopics'></td></tr>" +
-										"<tr><td style='width:50%'>Message Filtering <i class='icon icon-question-sign' title='Note: filters only work on retro skins if Message Poster Display: Above Message is selected in the Advanced Site Settings'></i></td><td><input type='checkbox' id='enableFilter'></td></tr>" +
+					"<tr><td style='width:50%'>Message Filtering <i class='icon icon-question-sign' title='Note: filters only work on retro skins if Message Poster Display: Above Message is selected in the Advanced Site Settings'></i></td><td><input type='checkbox' id='enableFilter'></td></tr>" +
                                         "<tr><td style='width:50%'>Embedded Webm</td><td><input type='checkbox' id='enableWebm'></td></tr>" +
                                         "<tr><td style='width:50%'>Embedded Gifv</td><td><input type='checkbox' id='enableGifv'></td></tr>" +
                                         "<tr><td style='width:50%'>Embedded Images</td><td><input type='checkbox' id='enableImages'></td></tr>" +
@@ -610,8 +613,9 @@ if(jQuery)
                                         "<option value='left'>Left</option>" +
                                         "<option value='right'>Right</option></select></td></tr>" +										
                                         "<tr><td style='width:50%'>Account Switcher</td><td><input type='checkbox' id='enableAccountSwitcher'></td></tr>" +
-                                        "<tr><td style='width:50%'>Rotating Sigs</td><td><input type='checkbox' id='enableRotatingSigs'></td></tr>" +	
-                                        "<tr><td style='width:50%'>Quick Topic</td><td><input type='checkbox' id='enableQuickTopic'></td></tr>" +																														
+                                        "<tr><td style='width:50%'>Rotating Sigs</td><td><input type='checkbox' id='enableRotatingSigs'></td></tr>" +
+					"<tr><td style='width:50%'>Quick Topic</td><td><input type='checkbox' id='enableQuickTopic'></td></tr>" +
+					"<tr><td style='width:50%'>Hotkeys <i class='icon icon-question-sign' title='Alt+Z to post, Alt+X to preview. This may conflict with other hotkey scripts.'></i></td><td><input type='checkbox' id='enableHotkeys'></td></tr>" +
                                         "<tr><td colspan='2'><input type='submit' id='updateGeneral' class='btn' value='Update xFAQs Settings'></td></tr>" +
                                     "</table>" +
                                 "</div>" +
@@ -712,7 +716,9 @@ if(jQuery)
         $("#enableAvatars").val(_SETTINGS_.settings[0].enableAvatars);
         $("#enableAccountSwitcher").prop('checked', _SETTINGS_.settings[0].enableAccountSwitcher);
         $("#enableRotatingSigs").prop('checked', _SETTINGS_.settings[0].enableRotatingSigs);
-        $("#enableQuickTopic").prop('checked', _SETTINGS_.settings[0].enableQuickTopic);				
+        $("#enableQuickTopic").prop('checked', _SETTINGS_.settings[0].enableQuickTopic);
+        $("#enableHotkeys").prop('checked', _SETTINGS_.settings[0].enableHotkeys);				
+		
     });
  
     // "Save Settings"
@@ -730,7 +736,8 @@ if(jQuery)
         _SETTINGS_.settings[0].enableAvatars = $('#enableAvatars').val()
         _SETTINGS_.settings[0].enableAccountSwitcher = $('#enableAccountSwitcher').is(":checked");
         _SETTINGS_.settings[0].enableRotatingSigs = $('#enableRotatingSigs').is(":checked");		
-        _SETTINGS_.settings[0].enableQuickTopic = $('#enableQuickTopic').is(":checked");				
+        _SETTINGS_.settings[0].enableQuickTopic = $('#enableQuickTopic').is(":checked");
+        _SETTINGS_.settings[0].enableHotkeys = $('#enableHotkeys').is(":checked");						
         localStorage.setItem("_SETTINGS_", JSON.stringify(_SETTINGS_));
         document.location = "/boards/user.php?settings=1#settings";
         location.reload(true);
@@ -902,8 +909,10 @@ if(jQuery)
 	}
  
     // Hotkeys
-    $("input[value='Post Message']").attr("accesskey", "z");
-    $("input[value='Preview Message']").attr("accesskey", "x");
+    if ( enableRotatingSigs ) {
+		$("input[value='Post Message']").attr("accesskey", "z");
+		$("input[value='Preview Message']").attr("accesskey", "x");
+	}
  
 	// Formatting	
 	function txtTagEdit(tag) {
