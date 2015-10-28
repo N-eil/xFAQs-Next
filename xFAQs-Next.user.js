@@ -102,7 +102,9 @@ if(jQuery)
 
     var _SETTINGS_ = getSettings(); // All user settings are stored in _SETTINGS_
     var _USER_ = $(".welcome").text().slice(0, - 1).replace(/ /g,"_"); // Use _USER_ whenever you need the user's username
+    var _AVATARDOMAIN_ = 'http://avatarfaqs.pcriot.com/avatars/'; //Moved up here for ease in changing if necessary
     var upload_user = _USER_ + " "; // used by Avatars.
+    var messageDisplayTop = ($('.msg_infobox').css('display') === 'block'); // Record whether they're using message display top or not
 
     if(_SETTINGS_.settings[0].searchTopics)
         addTopicSearchBar();
@@ -221,10 +223,7 @@ if(jQuery)
 
     function filterMessages() {
         function filterCallback(user) {
-            if($(".top").size() == 0)
-                $(".name:not(:contains('" + user + "'))").closest(".msg").toggle();
-            else
-                $(".name:not(:contains('" + user + "'))").closest(".top").toggle().next().toggle();
+            $(".name:not(:contains('" + user + "'))").closest(".msg").toggle();
         }
 
         $(".message_num").before(function(i) {
@@ -240,7 +239,7 @@ if(jQuery)
         moveMsgBelow();
 
     function moveMsgBelow() {
-        if ($('.top').length)
+        if (messageDisplayTop)
             return; // Don't move anything for message display top.  Potential TODO: Move msgBelow links into user info bar for message display top as well?
 
         $(".msg_below").css("position", "relative").each(function() {
@@ -252,53 +251,38 @@ if(jQuery)
         $(".options").css("float", "none");
     }
 
-    // Render Avatars
-    if (_SETTINGS_.settings[0].enableAvatars === "left")
-    {
-        switch($(".msg_infobox").css("display"))
+    if (_SETTINGS_.settings[0].enableAvatars !== 'disabled')
+        renderAvatars(_SETTINGS_.settings[0].enableAvatars);
+
+    function renderAvatars(avatarPlacement) {
+        if (avatarPlacement === "left")
         {
-            case "block": // Message Display Top
-                $(".msg_body").css("padding-left", "115px");
+            if (messageDisplayTop) {
                 $(".msg_infobox").css("clear", "both");
                 $(".msg_below").css("clear", "both");
-                $(".msg_body").each(function( index )
-                {
-                    var post_user = $(".name").eq(index).text().slice(0, - 1).replace(/ /g,"_");
-                    $(this).before("<div style='top:45px;padding:.5em;float:left'><img src='http://avatarfaqs.pcriot.com/avatars/" + post_user +".png' /></div>");
+                $(".msg_body").css("padding-left", "115px").each(function() {
+                    var post_user = $(this).parent().prev().find(".name").text().trim().replace(/ /g,"_");
+                    $(this).before("<div style='top:45px;padding:.5em;float:left'><img src='" + _AVATARDOMAIN_ + post_user +".png' /></div>");
                 });
-
-                $('img').error(function ()
-                {
-                    $(this).hide();
+            } else {
+                $(".msg_infobox").each(function() {
+                    var post_user = $(this).find(".name").text().trim().replace(/ /g,"_");
+                    $(this).find('.user').after("<img src='" + _AVATARDOMAIN_ + post_user +".png' />");
                 });
-                break;
-
-            case "table-cell":
-                $(".msg_infobox").each(function( index )
-                {
-                    var post_user = $(".name").eq(index).text().slice(0, - 1).replace(/ /g,"_");
-                    $(".msg_infobox > .user").eq(index).after("<img src='http://avatarfaqs.pcriot.com/avatars/" + post_user +".png' />");
-                });
-                break;
+            }
         }
-    }
-    else if (_SETTINGS_.settings[0].enableAvatars === "right")
-    {
-        $(".msg_body").css("padding-right", "calc(" + (105 - parseInt($(".msg_body").css("margin-right"))) + "px + 0.5em)");
-        $(".msg_infobox").css("clear", "both");
-        $(".msg_below").css("clear", "both");
-        $(".msg_body").each(function( index )
-        {
-            var post_user = $(".name").eq(index).text().slice(0, - 1).replace(/ /g,"_");
-            $(this).before("<div style='padding:.5em;float:right'><img src='http://avatarfaqs.pcriot.com/avatars/" + post_user +".png' /></div>");
-        });
+        else if (avatarPlacement === "right") {
+            $(".msg_body").css("padding-right", "calc(" + (105 - parseInt($(".msg_body").css("margin-right"), 10)) + "px + 0.5em)");
+            $(".msg_infobox").css("clear", "both");
+            $(".msg_below").css("clear", "both");
+            $(".msg_body").each(function() {
+                var post_user = $(this).parent().prev().find(".name").text().trim().replace(/ /g,"_");
+                $(this).before("<div style='padding:.5em;float:right'><img src='" + _AVATARDOMAIN_ + post_user +".png' /></div>");
+            });
+        }
 
-        $('img').error(function ()
-        {
-            $(this).hide();
-        });
+        $('img').error(function() { $(this).hide(); });
     }
-    // End Avatar Options
 
     // Account Switcher
 
