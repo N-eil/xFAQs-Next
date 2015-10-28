@@ -17,3 +17,4 @@ The current goal is to restore all functionality of xFAQs from before the change
 - K&R indentation. https://en.wikipedia.org/wiki/Indent_style#K.26R_style
 - Semicolons at the end of lines
 - Prefer single quotes for strings unless this would cause needless effort put into escaping the ' character within the string itself.
+- lowercase-with-hyphens for class and id of HTML elements.  You can't always abide by this since gfaqs gets it wrong, but use this for elements that xFAQs inserts.

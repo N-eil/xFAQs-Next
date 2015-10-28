@@ -284,143 +284,101 @@ if(jQuery)
         $('img').error(function() { $(this).hide(); });
     }
 
-    // Account Switcher
-
-    function asAddCallback(i)
-    {
-        return function()
-        {
-
-            $("#asAdd").attr("disabled", "disabled");
-
-            _SETTINGS_.accounts.push(
-                {
-                    "name": $("#asUser-" + i).val(),
-                    "pass": $("#asPass-" + i).val()
-                });
-
-
-            localStorage.setItem("_SETTINGS_", JSON.stringify(_SETTINGS_));
-            document.location = "/boards/user.php?settings=1#tabAccountSwitcher";
-            location.reload(true);
-
-        }
-    }
-
-    function asDeleteCallback(i)
-    {
-        return function()
-        {
-            $("#asDeleteBtn-" + i).attr("disabled", "disabled");
-
-            _SETTINGS_.accounts.splice((i-1), 1);
-            localStorage.setItem("_SETTINGS_", JSON.stringify(_SETTINGS_));
-
-            document.location = "/boards/user.php?settings=1#tabAccountSwitcher";
-            location.reload(true);
-
-        }
-    }
-
     if(_SETTINGS_.settings[0].enableAccountSwitcher)
-    {
-        function loginClickHandler(i)
-        {
-            return function()
-            {
-                var key;
+        addAccountSwitcher(_SETTINGS_.accounts);
 
-                $.ajax( {
-                    type: "GET",
-                    url: "/user/logout",
-                    async: false
-                });
+    function addAccountSwitcher(accounts) {
+        function loginClickHandler(account) {
+            var key;
 
-                if(!key)
-                {
-                    $.ajax({
-                        type: "POST",
-                        url: "/",
-                        async: false
-                    }).done(function(response) {
-                        key = response.match(/key" value="([^"]*)"/)[1];
-                    });
-                }
+            $.ajax( {
+                type: "GET",
+                url: "/user/logout",
+                async: false
+            });
 
-                var formData = "EMAILADDR=" + _SETTINGS_.accounts[i].name + "&PASSWORD=" + _SETTINGS_.accounts[i].pass + "&key=" +
-                                key + "&path=http://www.gamefaqs.com/";
+            $.ajax({
+                type: "POST",
+                url: "/",
+                async: false
+            }).done(function(response) {
+                key = response.match(/key" value="([^"]*)"/)[1];
+            });
 
-                $.ajax({
-                    type: "POST",
-                    url: "/user/login",
-                    data: formData,
-                    async: false
-                }).done(function() {
-                    location.reload(true);
-                });
+            var formData = "EMAILADDR=" + account.name + "&PASSWORD=" + account.pass + "&key=" + key + "&path=http://www.gamefaqs.com/";
 
-            }
+            $.ajax({
+                type: "POST",
+                url: "/user/login",
+                data: formData,
+                async: false
+            }).done(function() {
+                location.reload(true);
+            });
         }
 
-        $(".masthead_user").append("<a href='#' id='AccountSwitch'>Account Switcher</a>");
+        $(".masthead_user").append("<a href='#' id='account-switch'>Account Switcher</a>");
 
-        $("#AccountSwitch").click(function()
-        {
+        $("#account-switch").click(function() {
 
-            var topicForm = "<div id='AccountSwitchPanel' class='reg_dialog' style='position:fixed;left:25%;top:10%;width:50%'>" +
+            var topicForm = "<div id='account-switch-panel' class='reg_dialog' style='position:fixed;left:25%;top:10%;width:50%'>" +
                                 "<div style='padding:10px;'><h3>Account Switcher</h3>" +
                                 "<p>";
 
             topicForm += "<table>";
 
-            for(var i = 0; i < _SETTINGS_.accounts.length; i++) {
-                topicForm += "<tr><td>" + _SETTINGS_.accounts[i].name + "</td><td><button class='btn' id='asLogin-" + i + "'>Log in</button></td></tr>";
-            }
+            accounts.forEach(function(account) {
+                topicForm += "<tr><td>" + account.name + "</td><td><button class='switch btn'>Log in</button></td></tr>";
+            });
 
-            topicForm += "<table>";
+            topicForm += "</table>";
 
-            topicForm += "<br><button class='btn' id='AccountSwitchClose'>Close</button>" +
+            topicForm += "<br><button class='btn' id='account-switch-close'>Close</button>" +
                             "</p>" +
                             "</div></div>";
 
             $("body").append(topicForm);
+            $("#account-switch-panel .switch").click(function() {loginClickHandler(accounts[$('#account-switch-panel .switch').index(this)]);});
 
-            for(var i = 0; i < _SETTINGS_.accounts.length; i++)
-            {
-                $("#asLogin-" + i).click(loginClickHandler(i));
-            }
+            $("#account-switch-close").click(function() { $("#account-switch-panel").remove(); });
+        });
+    }
 
-            $("#AccountSwitchClose").click(function()
-            {
-                $("#AccountSwitchPanel").remove();
-            });
+    function generateAccountSwitcherBody() {
+        var switcherBody = "<h3>Account Switcher Settings</h3>";
+        switcherBody += "<p>Note: This is super dangerous. Passwords are saved unencrypted in localStorage. Please use this with caution. " +
+                            "<b>I have no access to your account information and am not liable for anything that may happen as a result of using this feature!</b></p>";
 
+        switcherBody += '<table id="account-list">';
+
+
+        switcherBody += '<tr class="acount-switcher-row">' +
+                            '<td>Username</td>' +
+                            '<td><input class="username" style="width:100%"> </td>' +
+                            '<td>Password</td>' +
+                            '<td><input class= "password" type="password" style="width:100%"> </td>' +
+                            '<td><button class="account-new btn">Add</button></td>' +
+                        '</tr>';
+
+
+        function createAccountAddMarkup(acc) {
+            return '<tr class="account-switcher-row">' +
+                        '<td>Username</td>' +
+                        '<td><input class="username" style="width:100%" value="' + acc.name + '"></td>' +
+                        '<td>Password</td>' +
+                        '<td><input class= "password" type="password" style="width:100%" value="' + acc.pass + '"></td>' +
+                        '<td><button class="account-remove btn">Remove</button></td>' +
+                    '</tr>';
+        }
+
+        _SETTINGS_.accounts.forEach(function(acc) {
+            switcherBody += createAccountAddMarkup(acc);
         });
 
+        switcherBody += "</table>";
 
+        return switcherBody;
     }
-
-    var switcherBody = "<h3>Account Switcher Settings</h3>";
-    switcherBody += "<p>Note: This is super dangerous. Passwords are saved unencrypted in localStorage. Please use this with caution. " +
-                        "<b>I have no access to your account information and am not liable for anything that may happen as a result of using this feature!</b></p>";
-
-    switcherBody += "<table>";
-
-    var accNumber= 0;
-
-    for( accNumber; accNumber < _SETTINGS_.accounts.length; accNumber++)
-    {
-        switcherBody += "<tr><td>Username</td><td><input id='asUser-" + (accNumber + 1) + "' style='width:100%' value=\"" +
-                        _SETTINGS_.accounts[accNumber].name + "\"></td><td>Password</td><td><input type='password' id='asPass-" +
-                        (accNumber + 1) + "' style='width:100%' value=\"" + _SETTINGS_.accounts[accNumber].pass +
-                        "\"></td><td><button class='btn' id='asDeleteBtn-" + (accNumber + 1) + "'>Remove</button></td></tr>";
-    }
-
-    switcherBody += "<tr><td>Username</td><td><input id='asUser-" + (accNumber + 1) + "' style='width:100%' value=\"" + "" +
-                    "\"></td><td>Password</td><td><input type='password' id='asPass-" +
-                    (accNumber + 1) + "' style='width:100%' value=\"" + "" + "\"></td><td><button class='btn' id='asAdd'>Add</button></td></tr>";
-
-    switcherBody += "</table>";
     // End Account Switcher
 
     // SIG STUFF
@@ -506,7 +464,7 @@ if(jQuery)
                                 "<li class='cnav_item' style='border-radius: 5px; cursor: pointer;'><a href='#tabs-3'>User Highlighting</a></li>" +
                                 "<li class='cnav_item' style='border-radius: 5px; cursor: pointer;'><a href='#tabs-4'>Ignore List+</a></li>" +
                                 "<li class='cnav_item' style='border-radius: 5px; cursor: pointer;'><a href='#tabs-5'>Rotating Signatures</a></li>" +
-                                "<li class='cnav_item' style='border-radius: 5px; cursor: pointer;'><a href='#tabAccountSwitcher'>Account Switcher</a></li>" +
+                                "<li class='cnav_item' style='border-radius: 5px; cursor: pointer;'><a href='#tab-account-switcher'>Account Switcher</a></li>" +
 
                                 "<li class='cnav_item' style='border-radius: 5px; cursor: pointer;'><a href='#tabs-6'>About</a></li>" +
                                 "</ul>" +
@@ -555,7 +513,7 @@ if(jQuery)
                                //"<div id='tabs-4' style='padding-top:20px'>" + ignoreBody + "</div>" +
                                "<div id='tabs-5' style='padding-top:20px'>" + sigBody + "</div>" +
                                //"<div id='tabs-6' style='padding-top:20px'>" + aboutBody + "</div>" +
-                               "<div id='tabAccountSwitcher' style='padding-top:20px'>" + switcherBody + "</div>" +
+                               "<div id='tab-account-switcher' style='padding-top:20px'>" + generateAccountSwitcherBody() + "</div>" +
                             "</div>");
 
     // MORE SIG STUFF
@@ -606,12 +564,27 @@ if(jQuery)
     }
 
     // More Account Switcher
-    $("#asAdd").click(asAddCallback(accNumber + 1));
+    function asAddCallback($entry) {
+        _SETTINGS_.accounts.push(
+            {
+                "name": $entry.find('.username').val(),
+                "pass": $entry.find('.password').val()
+            });
 
-    for(var i = 0; i < accNumber; i++)
-    {
-        $("#asDeleteBtn-" + (i + 1)).click(asDeleteCallback(i + 1));
+        localStorage.setItem("_SETTINGS_", JSON.stringify(_SETTINGS_));
+        document.location = "/boards/user.php?settings=1#tab-account-switcher";
+        location.reload(true);
     }
+
+    function asDeleteCallback(index) {
+        _SETTINGS_.accounts.splice(index, 1);
+        localStorage.setItem("_SETTINGS_", JSON.stringify(_SETTINGS_));
+        document.location = "/boards/user.php?settings=1#tab-account-switcher";
+        location.reload(true);
+    }
+
+    $('#account-list').on('click', '.account-new', function(){asAddCallback($(this).closest('tr'));});
+    $('#account-list').on('click', '.account-remove', function(){asDeleteCallback($('#account-list .account-remove').index(this));});
     // End More Account Switcher
 
     $(function() {
