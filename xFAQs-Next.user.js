@@ -193,6 +193,7 @@ if(jQuery)
         var $buttonTemplate = $('<button class="btn" style="margin-left:5px;padding-left:3px;padding-right:3px;padding-top:1px;padding-bottom:1px;">' +
                             '<i class="icon icon-play-circle"></i></button>');
         var $videoTemplate = $('<div style="display:none"> <iframe width="720" height="480"frameborder="0" allowfullscreen></iframe> </div>');
+
         $('td.msg a').each(function() {
             if (!(ytregex.test($(this).attr('href'))))
                 return;
@@ -215,37 +216,23 @@ if(jQuery)
     }
 
     // Message filtering
-    if(_SETTINGS_.settings[0].enableFilter) {
+    if(_SETTINGS_.settings[0].enableFilter)
+        filterMessages();
+
+    function filterMessages() {
         function filterCallback(user) {
-            return function() {
-                if($(".top").size() == 0)
-                {
-                    $(".name:not(:contains('" + user + "'))").closest(".msg").toggle();
-                }
-                else
-                {
-                    $(".name:not(:contains('" + user + "'))").closest(".top").toggle();
-                    $(".name:not(:contains('" + user + "'))").closest(".top").next().toggle();
-                }
-
-            }
-
+            if($(".top").size() == 0)
+                $(".name:not(:contains('" + user + "'))").closest(".msg").toggle();
+            else
+                $(".name:not(:contains('" + user + "'))").closest(".top").toggle().next().toggle();
         }
 
-        var msgCount = $("td.msg").length;
-
-        for( var i = 0; i < msgCount; i++) {
-            var user = $(".name").eq(i).text();
-            if($(".msg_stats_left").size() !== 0) {
-                $("a.qq").eq(i).parent().after("<span class='postaction'>" + "<a href='#' class='filter-" + i + "'>filter</a>");
-            } else {
-                $("a.qq").eq(i).parent().after("<span class='postaction'>" + "<a href='#' class='filter-" + i + "'>filter</a>");
-            }
-
-            $(".filter-" + i).click(filterCallback(user));
-
-        }
-
+        $(".message_num").after(function(i) {
+            var $span = $("<span class='postaction'> </span>");
+            return $("<a href='#' class='filter-" + i + "'> filter </a>")
+                .appendTo($span)
+                .click(function(){ filterCallback($(this).siblings('.user').find('.name').text()); });
+        });
     }
 
     // Quote, Edit, Delete, Report... In Left of Post
