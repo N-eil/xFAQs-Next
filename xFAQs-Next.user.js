@@ -130,20 +130,19 @@ if(jQuery)
         });
     }
 
-    // AMP on each page.
     if(_SETTINGS_.settings[0].enableAMP)
-    {
+        addAmpButton();
+
+    function addAmpButton() {
         var ampURL = "http://www.gamefaqs.com/users/" + _USER_ + "/boards";
-        if(ampURL)
-        {
+        if(ampURL) {
             $.ajax({
                 type: "POST",
                 url: ampURL,
             })
-            .done(function(response)
-            {
+            .done(function(response) {
                 var amp = $(response).find("#content > div > div > div > table > tbody:nth-child(3) > tr:nth-child(8) > td:nth-child(2)").text();
-                $(".paginate.user > .unav").after("<li><a href='http://www.gamefaqs.com/boards/myposts.php?'>" + amp + " AMP</a></li>");
+                $(".paginate.user > .unav").after("<li><a href='http://www.gamefaqs.com/user/messages'>" + amp + " AMP</a></li>");
             });
 
         }
