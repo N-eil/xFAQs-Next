@@ -555,7 +555,7 @@ if(jQuery)
 
         function sigDeleteCallback($entry, index) {
             $entry.nextUntil('.signature-header-row').addBack().remove();
-            _SETTINGS_.signatures.splice((i-1), 1);
+            _SETTINGS_.signatures.splice((index-1), 1);
             localStorage.setItem("_SETTINGS_", JSON.stringify(_SETTINGS_));
         }
 
@@ -636,27 +636,18 @@ if(jQuery)
         // End Settings Page
     }
 
-    // ajax call to load the news page
-    $.ajax( {
-        url: "http://avatarfaqs.pcriot.com/xfaqsnews.php",
+    // ajax call to load the news page (should only ajax when settings page is loaded
+    $.ajax({
+        url: "https://raw.githubusercontent.com/N-eil/xFAQs-Next/master/news.txt",
         dataType: "html",
         type: "GET",
-    })
-    .done(function( data )
-    {
+    }).done(function(data) {
         $("#news").html(data);
-    })
-    .error(function()
-    {
-        $("#news").html("There's no news. Ask Blood Money what we're up to.");
+    }).error(function() {
+        $("#news").html("There's no news. Ask <a href='http://www.gamefaqs.com/boards/565885-'>Blood Money</a> what we're up to.");
     });
 
-    // Remove any broken images at the end.
-    $('img').error(function () {
-        $(this).hide();
-    });
-
-    // Avatars stuff
+    // Avatars stuff (should only be called when settings page is loaded)
     $("#file").change(function() {
         var file = this.files[0];
         var size = file.size;
@@ -781,7 +772,7 @@ if(jQuery)
     });
     // End Avatars Stuff
 
-    // Rotating sigs
+    // Add rotating sigs while posting
     if (_SETTINGS_.settings[0].enableRotatingSigs) {
         var sigList = _SETTINGS_.signatures;
         var board = $('.page-title').html().trim();
@@ -800,11 +791,11 @@ if(jQuery)
         }
     }
 
-    // Hotkeys
+    // Add post hotkeys while posting
     $("input[value='Post Message']").attr("accesskey", "z");
     $("input[value='Preview Message']").attr("accesskey", "x");
 
-    // Formatting
+    // Formatting buttons while posting
     function txtTagEdit(tag) {
         var msgAreaEdit = document.getElementsByName('messagetext')[0];
         var currTag = document.getElementsByName(tag)[0];
@@ -870,7 +861,7 @@ if(jQuery)
 
     }
 
-    // Quick Topic
+    // Add quick topic to topic list
     if(_SETTINGS_.settings[0].enableQuickTopic) {
         if($(".action").eq(0).text() == " New Topic") {
             var key;
