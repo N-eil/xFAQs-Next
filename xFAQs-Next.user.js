@@ -102,7 +102,7 @@ if(jQuery)
 
     var _SETTINGS_ = getSettings(); // All user settings are stored in _SETTINGS_
     var _USER_ = $(".welcome").text().slice(0, - 1).replace(/ /g,"_"); // Use _USER_ whenever you need the user's username
-    var _AVATARDOMAIN_ = 'http://avatarfaqs.pcriot.com/avatars/'; //Moved up here for ease in changing if necessary
+    var _AVATARDOMAIN_ = 'http://avatarfaqs.pcriot.com/'; //Moved up here for ease in changing if necessary
     var upload_user = _USER_ + " "; // used by Avatars.
     var messageDisplayTop = ($('.msg_infobox').css('display') === 'block'); // Record whether they're using message display top or not
 
@@ -262,12 +262,12 @@ if(jQuery)
                 $(".msg_below").css("clear", "both");
                 $(".msg_body").css("padding-left", "115px").each(function() {
                     var post_user = $(this).parent().prev().find(".name").text().trim().replace(/ /g,"_");
-                    $(this).before("<div style='top:45px;padding:.5em;float:left'><img src='" + _AVATARDOMAIN_ + post_user +".png' /></div>");
+                    $(this).before("<div style='top:45px;padding:.5em;float:left'><img src='" + _AVATARDOMAIN_ + 'avatars/' + post_user +".png' /></div>");
                 });
             } else {
                 $(".msg_infobox").each(function() {
                     var post_user = $(this).find(".name").text().trim().replace(/ /g,"_");
-                    $(this).find('.user').after("<img src='" + _AVATARDOMAIN_ + post_user +".png' />");
+                    $(this).find('.user').after("<img src='" + _AVATARDOMAIN_ + 'avatars/' + post_user +".png' />");
                 });
             }
         }
@@ -277,7 +277,7 @@ if(jQuery)
             $(".msg_below").css("clear", "both");
             $(".msg_body").each(function() {
                 var post_user = $(this).parent().prev().find(".name").text().trim().replace(/ /g,"_");
-                $(this).before("<div style='padding:.5em;float:right'><img src='" + _AVATARDOMAIN_ + post_user +".png' /></div>");
+                $(this).before("<div style='padding:.5em;float:right'><img src='" + _AVATARDOMAIN_ + 'avatars/' + post_user +".png' /></div>");
             });
         }
 
@@ -647,27 +647,26 @@ if(jQuery)
         $("#news").html("There's no news. Ask <a href='http://www.gamefaqs.com/boards/565885-'>Blood Money</a> what we're up to.");
     });
 
-    // Avatars stuff (should only be called when settings page is loaded)
+    // Avatars click/change events (should only be called when settings page is loaded)
     $("#file").change(function() {
         var file = this.files[0];
         var size = file.size;
         var type = file.type;
+        $("#submit_btn").css("display", "none");
 
-        if( !type.match(/image.*/) ) {
-            $("#submit_btn").css("display", "none");
+        if (!type.match(/image.*/)) {
             $("#server_message").html("Invalid File Type");
             return;
         }
 
-        if( size > 204800 ) {
-            $("#submit_btn").css("display", "none");
+        if (size > 204800) {
             $("#server_message").html("Image is too big (" + size/1024 + "KB). 200KB maximum.");
             return;
         }
 
-        if( !_USER_ ) {
-            $("#submit_btn").css("display", "none");
+        if (!_USER_) {
             $("#server_message").html("Log in to upload avatars.");
+            return;
         }
 
         $("#submit_btn").css("display", "inline");
@@ -675,96 +674,51 @@ if(jQuery)
     });
 
     // ajax request that handles the upload.
-    // For the love of god do not modify this. Bad things will happen.
+    // I modified it, tee hee
+    function restoreSig(url, key, sig) {
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: "key=" + key + "&sig=" + sig + "&submit=Change Settings",
+        });
+    }
 
-    $("#submit_btn").click( function() {
+    $("#submit_btn").click(function() {
         var formData = new FormData($('#submit')[0]);
 
         $("#server_message").html("backing up signature...");
 
-        $.ajax
-        ({
+        $.ajax({
             type: "POST",
             url: "/boards/sigquote.php",
-            async: false,
-        })
-        .done(function(response)
-        {
+        }).done(function(response) {
             var sig = $(response).find("#sig").text();
-            var quote = $(response).find("#quote").text();
             var key = $(response).find("input[name=key]").eq(0).attr("value");
             var sigpost = $(response).find("#add").attr("action");
-            //console.log(sig);
-            //console.log(key);
-            //console.log(sigpost);
-
 
             if((sig == "upload:ok") || (sig == "avatarupload:true"))
-            {
-                // replace old signature
                 sig = "";
-            }
 
             $("#server_message").html("Sending permission to change sig");
 
-            $.ajax
-            ({
+            $.ajax({
                 type: "POST",
                 url: sigpost,
-                data: "key=" + key + "&sig=" + "avatarupload:true" + "&quote=" + quote + "&submit=Change Settings",
-            })
-            .done(function(response)
-            {
+                data: "key=" + key + "&sig=" + "avatarupload:true" + "&submit=Change Settings",
+            }).done(function(response) {
                 $("#server_message").html("Uploading...");
                 $.ajax( {
-                    url: "http://avatarfaqs.pcriot.com/upload-v2.php",
+                    url: _AVATARDOMAIN_ + '/upload-v2.php',
                     dataType: "html",
                     type: "POST",
                     data: formData,
                     processData: false,
                     contentType: false,
-                    async: false
-                }).done(function( data ) {
-                    if( data == 'Upload Successful!')
-                    {
-                        $.ajax
-                        ({
-                            type: "POST",
-                            url: sigpost,
-                            data: "key=" + key + "&sig=" + sig + "&quote=" + quote + "&submit=Change Settings",
-                        })
-                        .done(function(response)
-                        {
-                            //console.log("Sig changed back.");
-                            $("#server_message").html(data);
-                            location.href = "http://www.gamefaqs.com/boards/user.php?settings=1#tabs-2";
-                            location.reload(true);
-                        });
-                    }
-                    else
-                    {
-                        $.ajax
-                        ({
-                            type: "POST",
-                            url: sigpost,
-                            data: "key=" + key + "&sig=" + sig + "&quote=" + quote + "&submit=Change Settings",
-                        }).done(function(response)
-                        {
-                            //console.log("Sig changed back.");
-                        });
-                        $("#server_message").html(data);
-                    }
-                }).error(function() {
-                    $.ajax
-                    ({
-                        type: "POST",
-                        url: sigpost,
-                        data: "key=" + key + "&sig=" + sig + "&quote=" + quote + "&submit=Change Settings",
-                    })
-                    .done(function(response)
-                    {
-                        //console.log("Sig changed back.");
-                    });
+                }).done(function() {
+                    restoreSig(sigpost, key, sig);
+                    location.reload(true);
+                }).fail(function() {
+                    restoreSig(sigpost, key, sig);
                     $("#server_message").html("Avatar not uploaded to avatarfaqs domain. Service may be unavailable.");
                 });
             });
