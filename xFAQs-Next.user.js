@@ -382,10 +382,32 @@ if(jQuery)
     // End Account Switcher
 
     // SIG STUFF
-    var sigBody = "<p style='float:left'>1 line break and 160 characters allowed. Just like with regular sigs.<br> If you want a signature to apply to all boards or accounts leave the field blank.<br>Multiple boards and accounts are separated by commas.</p>";
-    sigBody += " <div style='float:right'><button  class='btn btn_primary' id='sig-export'>Export Signature Data</button> ";
-    sigBody += " <button class='btn' id='sig-import'>Import Signature Data</button></div> ";
+    function generateRotatingSigsBody() {
+        var sigBody = "<p style='float:left'>1 line break and 160 characters allowed. Just like with regular sigs.<br> If you want a signature to apply to all boards or accounts leave the field blank.<br>Multiple boards and accounts are separated by commas.</p>";
+        sigBody += " <div style='float:right'><button  class='btn btn_primary' id='sig-export'>Export Signature Data</button> ";
+        sigBody += " <button class='btn' id='sig-import'>Import Signature Data</button></div> ";
 
+        function createSigChangeMarkup(sig, index){
+            return "<tr class='signature-header-row'><th colspan='2'>Signature " + (index + 1) + " <input type='submit' class='sig-update btn' style='float:right; margin-left:10px;' value='Update'><input type='submit' class='sig-delete btn' style='float:right' value='Delete'></th></tr>" +
+                "<tr class='board-names-row'><td>Board Names</td><td><input class='board-names' style='width:100%' value=\"" + sig.boards + "\"></td></tr>" +
+                "<tr class='accounts-row'><td>Accounts</td><td><input class='accounts' style='width:100%' value=\"" + sig.accounts + "\"></td></tr>" +
+                "<tr class='signature-row'><td>Signature</td><td><textarea class='signature' style='width:100%'>" + sig.signature + "</textarea></td></tr>";
+        }
+
+        sigBody += "<table id='existing-sigs'>" +
+                    "<tr class='signature-header-row'><th colspan='2'> New Signature <input type='submit' class='sig-new btn' style='float:right' value='Add'></th></tr>" +
+                    "<tr class='board-names-row'><td>Board Names</td><td><input class='board-names' style='width:100%'></td></tr>" +
+                    "<tr class='accounts-row'><td>Accounts</td><td><input class='accounts' style='width:100%'></td></tr>" +
+                    "<tr class='signature-row'><td>Signature</td><td><textarea class='signature' style='width:100%'></textarea></td></tr>";
+
+        _SETTINGS_.signatures.forEach(function(sig, index){
+            sigBody += createSigChangeMarkup(sig, index);
+        });
+
+        sigBody += "</table><br>";
+
+        return sigBody;
+    }
     // Sig Export Widget.
     $("body").append("<div id='sigWidget' style='display:none'><p>Save this text data in a text file</p><textarea id='sigbackup' style='width:100%; height:500px;' readonly>" + JSON.stringify(_SETTINGS_.signatures, null, "\t") + "</textarea></div>");
     $("#sigWidget").dialog({
@@ -413,24 +435,7 @@ if(jQuery)
     $("#sigWidgetI").parent().addClass("reg_dialog");
     $("button").addClass("btn");
 
-    function createSigChangeMarkup(sig, index){
-        return     "<tr class='signature-header-row'><th colspan='2'>Signature " + (index + 1) + " <input type='submit' class='sig-update btn' style='float:right; margin-left:10px;' value='Update'><input type='submit' class='sig-delete btn' style='float:right' value='Delete'></th></tr>" +
-            "<tr class='board-names-row'><td>Board Names</td><td><input class='board-names' style='width:100%' value=\"" + sig.boards + "\"></td></tr>" +
-            "<tr class='accounts-row'><td>Accounts</td><td><input class='accounts' style='width:100%' value=\"" + sig.accounts + "\"></td></tr>" +
-            "<tr class='signature-row'><td>Signature</td><td><textarea class='signature' style='width:100%'>" + sig.signature + "</textarea></td></tr>";
-    }
 
-    sigBody +=    "<table id='existing-sigs'>" +
-                    "<tr class='signature-header-row'><th colspan='2'> New Signature <input type='submit' class='sig-new btn' style='float:right' value='Add'></th></tr>" +
-                    "<tr class='board-names-row'><td>Board Names</td><td><input class='board-names' style='width:100%'></td></tr>" +
-                    "<tr class='accounts-row'><td>Accounts</td><td><input class='accounts' style='width:100%'></td></tr>" +
-                    "<tr class='signature-row'><td>Signature</td><td><textarea class='signature' style='width:100%'></textarea></td></tr>";
-
-    _SETTINGS_.signatures.forEach(function(sig, index){
-        sigBody += createSigChangeMarkup(sig, index);
-    });
-
-    sigBody += "</table><br>";
     // END OF SIG STUFF
 
     // Link to the Settings Page
@@ -511,7 +516,7 @@ if(jQuery)
                                "</div>" +
                                //"<div id='tabs-3' style='padding-top:20px'>" + highlightBody + "</div>" +
                                //"<div id='tabs-4' style='padding-top:20px'>" + ignoreBody + "</div>" +
-                               "<div id='tabs-5' style='padding-top:20px'>" + sigBody + "</div>" +
+                               "<div id='tabs-5' style='padding-top:20px'>" + generateRotatingSigsBody() + "</div>" +
                                //"<div id='tabs-6' style='padding-top:20px'>" + aboutBody + "</div>" +
                                "<div id='tab-account-switcher' style='padding-top:20px'>" + generateAccountSwitcherBody() + "</div>" +
                             "</div>");
@@ -554,12 +559,12 @@ if(jQuery)
             localStorage.setItem("_SETTINGS_", JSON.stringify(_SETTINGS_));
         }
 
+        // Rotating sig click handlers, should go after the xfaqs settings markup is appended
         $('#existing-sigs').on('click', '.sig-update', function(){sigClickCallback($(this).closest('tr'), $('#existing-sigs .sig-update').index(this));});
         $('#existing-sigs').on('click', '.sig-new', function(){sigClickCallback($(this).closest('tr'));});
         $('#existing-sigs').on('click', '.sig-delete', function(){sigDeleteCallback($(this).closest('tr'), $('#existing-sigs .sig-delete').index(this));});
         $("#sig-export").click(function(){$("#sigWidget").dialog("open");});
         $("#sig-import").click(function(){$("#sigWidgetI").dialog("open");});
-        // END OF MORE SIG STUFF
 
     }
 
@@ -583,9 +588,9 @@ if(jQuery)
         location.reload(true);
     }
 
+    // Account switcher click handlers, should go after xfaqs settings markup is appended
     $('#account-list').on('click', '.account-new', function(){asAddCallback($(this).closest('tr'));});
     $('#account-list').on('click', '.account-remove', function(){asDeleteCallback($('#account-list .account-remove').index(this));});
-    // End More Account Switcher
 
     $(function() {
         $("#xfaqs-tabs").tabs();
