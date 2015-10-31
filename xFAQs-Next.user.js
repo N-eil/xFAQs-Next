@@ -495,7 +495,7 @@ if(jQuery)
                                         "<tr><td style='width:50%'>Account Switcher</td><td><input type='checkbox' id='enableAccountSwitcher'></td></tr>" +
                                         "<tr><td style='width:50%'>Rotating Sigs</td><td><input type='checkbox' id='enableRotatingSigs'></td></tr>" +
                                         "<tr><td style='width:50%'>Quick Topic</td><td><input type='checkbox' id='enableQuickTopic'></td></tr>" +
-                                        "<tr><td colspan='2'><input type='submit' id='updateGeneral' class='btn' value='Update xFAQs Settings'></td></tr>" +
+                                        "<tr><td colspan='2'><input type='submit' id='update-general' class='btn' value='Update xFAQs Settings'></td></tr>" +
                                     "</table>" +
                                 "</div>" +
 
@@ -566,74 +566,75 @@ if(jQuery)
         $("#sig-export").click(function(){$("#sigWidget").dialog("open");});
         $("#sig-import").click(function(){$("#sigWidgetI").dialog("open");});
 
+
+        // More Account Switcher
+        function asAddCallback($entry) {
+            _SETTINGS_.accounts.push(
+                {
+                    "name": $entry.find('.username').val(),
+                    "pass": $entry.find('.password').val()
+                });
+
+            localStorage.setItem("_SETTINGS_", JSON.stringify(_SETTINGS_));
+            document.location = "/boards/user.php?settings=1#tab-account-switcher";
+            location.reload(true);
+        }
+
+        function asDeleteCallback(index) {
+            _SETTINGS_.accounts.splice(index, 1);
+            localStorage.setItem("_SETTINGS_", JSON.stringify(_SETTINGS_));
+            document.location = "/boards/user.php?settings=1#tab-account-switcher";
+            location.reload(true);
+        }
+
+        // Account switcher click handlers, should go after xfaqs settings markup is appended
+        $('#account-list').on('click', '.account-new', function(){asAddCallback($(this).closest('tr'));});
+        $('#account-list').on('click', '.account-remove', function(){asDeleteCallback($('#account-list .account-remove').index(this));});
+
+        $(function() {
+            $("#xfaqs-tabs").tabs();
+        });
+
+        // "Load Settings"
+        function loadSettingsConfig() {
+            $("#enableAMP").prop('checked', _SETTINGS_.settings[0].enableAMP);
+            $("#enablePopular").prop('checked', _SETTINGS_.settings[0].enablePopular);
+            $("#searchTopics").prop('checked', _SETTINGS_.settings[0].searchTopics);
+            $("#enableFilter").prop('checked', _SETTINGS_.settings[0].enableFilter);
+            $("#enableWebm").prop('checked', _SETTINGS_.settings[0].enableWebm);
+            $("#enableGifv").prop('checked', _SETTINGS_.settings[0].enableGifv);
+            $("#enableImages").prop('checked', _SETTINGS_.settings[0].enableImages);
+            $("#enableYoutube").prop('checked', _SETTINGS_.settings[0].enableYoutube);
+            $("#msgBelowLeftOfPost").prop('checked', _SETTINGS_.settings[0].msgBelowLeftOfPost);
+            $("#enableAvatars").val(_SETTINGS_.settings[0].enableAvatars);
+            $("#enableAccountSwitcher").prop('checked', _SETTINGS_.settings[0].enableAccountSwitcher);
+            $("#enableRotatingSigs").prop('checked', _SETTINGS_.settings[0].enableRotatingSigs);
+            $("#enableQuickTopic").prop('checked', _SETTINGS_.settings[0].enableQuickTopic);
+        }
+
+        // "Save Settings"
+        function saveSettingsConfig() {
+            _SETTINGS_.settings[0].enableAMP = $('#enableAMP').is(":checked");
+            _SETTINGS_.settings[0].enablePopular = $('#enablePopular').is(":checked");
+            _SETTINGS_.settings[0].searchTopics = $('#searchTopics').is(":checked");
+            _SETTINGS_.settings[0].enableFilter = $('#enableFilter').is(":checked");
+            _SETTINGS_.settings[0].enableWebm = $('#enableWebm').is(":checked");
+            _SETTINGS_.settings[0].enableGifv = $('#enableGifv').is(":checked");
+            _SETTINGS_.settings[0].enableImages = $('#enableImages').is(":checked");
+            _SETTINGS_.settings[0].enableYoutube = $('#enableYoutube').is(":checked");
+            _SETTINGS_.settings[0].msgBelowLeftOfPost = $('#msgBelowLeftOfPost').is(":checked");
+            _SETTINGS_.settings[0].enableAvatars = $('#enableAvatars').val()
+            _SETTINGS_.settings[0].enableAccountSwitcher = $('#enableAccountSwitcher').is(":checked");
+            _SETTINGS_.settings[0].enableRotatingSigs = $('#enableRotatingSigs').is(":checked");
+            _SETTINGS_.settings[0].enableQuickTopic = $('#enableQuickTopic').is(":checked");
+            localStorage.setItem("_SETTINGS_", JSON.stringify(_SETTINGS_));
+            document.location = "/boards/user.php?settings=1#settings";
+            location.reload(true);
+        }
+        $("#update-general").click(saveSettingsConfig);
+
+        // End Settings Page
     }
-
-    // More Account Switcher
-    function asAddCallback($entry) {
-        _SETTINGS_.accounts.push(
-            {
-                "name": $entry.find('.username').val(),
-                "pass": $entry.find('.password').val()
-            });
-
-        localStorage.setItem("_SETTINGS_", JSON.stringify(_SETTINGS_));
-        document.location = "/boards/user.php?settings=1#tab-account-switcher";
-        location.reload(true);
-    }
-
-    function asDeleteCallback(index) {
-        _SETTINGS_.accounts.splice(index, 1);
-        localStorage.setItem("_SETTINGS_", JSON.stringify(_SETTINGS_));
-        document.location = "/boards/user.php?settings=1#tab-account-switcher";
-        location.reload(true);
-    }
-
-    // Account switcher click handlers, should go after xfaqs settings markup is appended
-    $('#account-list').on('click', '.account-new', function(){asAddCallback($(this).closest('tr'));});
-    $('#account-list').on('click', '.account-remove', function(){asDeleteCallback($('#account-list .account-remove').index(this));});
-
-    $(function() {
-        $("#xfaqs-tabs").tabs();
-    });
-
-    // "Load Settings"
-    $(function() {
-        $("#enableAMP").prop('checked', _SETTINGS_.settings[0].enableAMP);
-        $("#enablePopular").prop('checked', _SETTINGS_.settings[0].enablePopular);
-        $("#searchTopics").prop('checked', _SETTINGS_.settings[0].searchTopics);
-        $("#enableFilter").prop('checked', _SETTINGS_.settings[0].enableFilter);
-        $("#enableWebm").prop('checked', _SETTINGS_.settings[0].enableWebm);
-        $("#enableGifv").prop('checked', _SETTINGS_.settings[0].enableGifv);
-        $("#enableImages").prop('checked', _SETTINGS_.settings[0].enableImages);
-        $("#enableYoutube").prop('checked', _SETTINGS_.settings[0].enableYoutube);
-        $("#msgBelowLeftOfPost").prop('checked', _SETTINGS_.settings[0].msgBelowLeftOfPost);
-        $("#enableAvatars").val(_SETTINGS_.settings[0].enableAvatars);
-        $("#enableAccountSwitcher").prop('checked', _SETTINGS_.settings[0].enableAccountSwitcher);
-        $("#enableRotatingSigs").prop('checked', _SETTINGS_.settings[0].enableRotatingSigs);
-        $("#enableQuickTopic").prop('checked', _SETTINGS_.settings[0].enableQuickTopic);
-    });
-
-    // "Save Settings"
-    $("#updateGeneral").button();
-    $("#updateGeneral").click(function(event) {
-        _SETTINGS_.settings[0].enableAMP = $('#enableAMP').is(":checked");
-        _SETTINGS_.settings[0].enablePopular = $('#enablePopular').is(":checked");
-        _SETTINGS_.settings[0].searchTopics = $('#searchTopics').is(":checked");
-        _SETTINGS_.settings[0].enableFilter = $('#enableFilter').is(":checked");
-        _SETTINGS_.settings[0].enableWebm = $('#enableWebm').is(":checked");
-        _SETTINGS_.settings[0].enableGifv = $('#enableGifv').is(":checked");
-        _SETTINGS_.settings[0].enableImages = $('#enableImages').is(":checked");
-        _SETTINGS_.settings[0].enableYoutube = $('#enableYoutube').is(":checked");
-        _SETTINGS_.settings[0].msgBelowLeftOfPost = $('#msgBelowLeftOfPost').is(":checked");
-        _SETTINGS_.settings[0].enableAvatars = $('#enableAvatars').val()
-        _SETTINGS_.settings[0].enableAccountSwitcher = $('#enableAccountSwitcher').is(":checked");
-        _SETTINGS_.settings[0].enableRotatingSigs = $('#enableRotatingSigs').is(":checked");
-        _SETTINGS_.settings[0].enableQuickTopic = $('#enableQuickTopic').is(":checked");
-        localStorage.setItem("_SETTINGS_", JSON.stringify(_SETTINGS_));
-        document.location = "/boards/user.php?settings=1#settings";
-        location.reload(true);
-    });
-    // End Settings Page
 
     // ajax call to load the news page
     $.ajax( {
