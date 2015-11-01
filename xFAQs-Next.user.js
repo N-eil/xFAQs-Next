@@ -8,20 +8,20 @@
 // @grant        none
 // @noframes
 // ==/UserScript==
- 
+
 // https://github.com/N-eil/xFAQs-Next
- 
+
 // TODOs:
 // 3. Get the "MASTER" User Variable to work in all cases
 // 2. Settings Page (In the same Style as xfaqs does now) - Partial}
- 
- 
+
+
 // Note: jQuery is provided by GameFAQs by default. I will be using it a lot in this code.
-if(jQuery) 
+if(jQuery)
 {
     // The _SETTINGS_ Global
     // Use this to store user settings.
-    if( localStorage.getItem("_SETTINGS_") != null ) 
+    if( localStorage.getItem("_SETTINGS_") != null )
     {
         var _SETTINGS_ = JSON.parse(localStorage.getItem("_SETTINGS_"));
         var enableAMP = _SETTINGS_.settings[0].enableAMP;
@@ -37,7 +37,7 @@ if(jQuery)
         var enableAccountSwitcher = _SETTINGS_.settings[0].enableAccountSwitcher;
 		var enableRotatingSigs = _SETTINGS_.settings[0].enableRotatingSigs;
 		var enableQuickTopic = _SETTINGS_.settings[0].enableQuickTopic;
-		
+
 		// Automatically import signatures from old xFAQs if they don't have any set here
 		if( _SETTINGS_.signatures.length === 1 && localStorage.getItem('sigList')) {
 			_SETTINGS_.signatures = JSON.parse(localStorage.getItem("sigList")).signatures;
@@ -73,7 +73,7 @@ if(jQuery)
     } else
     {
         var _SETTINGS_ =
-        {   
+        {
             "settings": [
                 {
                     "enableAMP": false,
@@ -92,19 +92,19 @@ if(jQuery)
                 }
             ],
             "highlight-groups": [
-             
+
                 {
                     "groupName": "xFAQs Creator",
                     "color": "#FFD9D9",
-                    "userNames": [ "Judgmenl" ] 
+                    "userNames": [ "Judgmenl" ]
                 }
-             
+
             ],
-             
+
             "ignored-users": [
-                     
+
             ],
-             
+
             "signatures": [
                     {
                         "boards": [""],
@@ -112,11 +112,11 @@ if(jQuery)
                         "signature": "powered by xfaqs"
                     }
             ],
-             
+
             "accounts": [
-         
+
             ]
- 
+
         };
         localStorage.setItem("_SETTINGS_", JSON.stringify(_SETTINGS_));
         var enableAMP = _SETTINGS_.settings[0].enableAMP;
@@ -131,107 +131,107 @@ if(jQuery)
         var enableAvatars = _SETTINGS_.settings[0].enableAvatars;
 		var enableRotatingSigs = _SETTINGS_.settings[0].enableRotatingSigs;
 		var enableQuickTopic = _SETTINGS_.settings[0].enableQuickTopic;
- 
+
     }
-     
+
     // The "MASTER" user variable should be used in any case where you want the user's name.
     // I forget how to get the "accurate" Username... There are a few ways to get it. Going to use the welcome class for now.
     // This may be the incompatible one.
     var _USER_ = $(".welcome").text().slice(0, - 1).replace(/ /g,"_");
     var upload_user = _USER_ + " "; // used by Avatars.
- 
+
     // "Search Topics" At top of page
-    if(searchTopics) 
+    if(searchTopics)
     {
         $(".board_nav").after($(".searchtopics").css('margin', '0'));
     }
-     
+
     if(enableImages)
     {
         $('.msg_body a[href$=".gif"], .msg_body a[href$=".jpg"], .msg_body a[href$=".png"], .msg_body a[href$=".bmp"], .msg_body a[href$=".jpeg"]')
         .each(function(index, value) {
             var href = $(this).attr("href");
             var width;
-             
-            $(this).after(" <button id='tti-" + index +"' class='btn' style='padding-left:3px;padding-right:3px;padding-top:1px;padding-bottom:1px;'>" + 
+
+            $(this).after(" <button id='tti-" + index +"' class='btn' style='padding-left:3px;padding-right:3px;padding-top:1px;padding-bottom:1px;'>" +
                             "<i class='icon icon-picture'></i></button><span id='tti-image-" + index + "'></span>");
-             
+
             $("#tti-image-" + index).css("max-width", width);
- 
+
             $("#tti-image-" + index).hide();
-             
+
             $("#tti-" + index).click(function() {
                 $("#tti-image-" + index).html("<img id='tti-image-" + index + "' src='" + href + "' alt='TTI Image' style='display:block'>");
                 $("#tti-image-" + index).toggle();
-                 
+
             });
-         
+
         });
- 
+
     }
-     
+
     // AMP on each page.
     if(enableAMP)
     {
         var ampURL = "http://www.gamefaqs.com/users/" + _USER_ + "/boards";
-        if(ampURL) 
+        if(ampURL)
         {
             $.ajax({
                 type: "POST",
                 url: ampURL,
             })
-            .done(function(response) 
+            .done(function(response)
             {
                 var amp = $(response).find("#content > div > div > div > table > tbody:nth-child(3) > tr:nth-child(8) > td:nth-child(2)").text();
                 $(".paginate.user > .unav").after("<li><a href='http://www.gamefaqs.com/boards/myposts.php?'>" + amp + " AMP</a></li>");
             });
- 
-        }       
+
+        }
     }
-     
+
     if(enablePopular)
     {
         $(".paginate.user > .unav").after("<li><a href='http://www.gamefaqs.com/boards/popular.php?'>Popular</a></li>");
     }
- 
+
     // Webm
     if(enableWebm)
     {
-        $('a[href$=".webm"], a[href$=".WebM"], a[href$=".webM"], a[href$=".webM"]').each(function(index, value) 
+        $('a[href$=".webm"], a[href$=".WebM"], a[href$=".webM"], a[href$=".webM"]').each(function(index, value)
         {
             var href = $(this).attr("href");
-             
-            $(this).after(" <button id='webm-" + index +"' class='btn' style='padding-left:3px;padding-right:3px;padding-top:1px;padding-bottom:1px'><i class='icon icon-play-circle'></i></button><div id='webm-image-" + 
+
+            $(this).after(" <button id='webm-" + index +"' class='btn' style='padding-left:3px;padding-right:3px;padding-top:1px;padding-bottom:1px'><i class='icon icon-play-circle'></i></button><div id='webm-image-" +
                             index + "'><video controls><source src=\"" + href + "\" type=\'video/webm; codecs=\"vp8, vorbis\"\'></video></div>");
-             
+
             $("#webm-image-" + index).hide();
-             
-            $("#webm-" + index).click(function() 
+
+            $("#webm-" + index).click(function()
             {
                 $("#webm-image-" + index).toggle();
                 if( $("#webm-image-" + index + " > video").is(":hidden") )
                 {
                     $("#webm-image-" + index + " > video").get(0).pause();
                 }
- 
+
             });
-             
+
         });
     }
-     
+
     // Gifv
     if(enableGifv)
     {
-        $('a[href$=".gifv"]').each(function(index, value) 
+        $('a[href$=".gifv"]').each(function(index, value)
         {
             var href = $(this).attr("href");
-             
-            $(this).after(" <button id='gifv-" + index +"' class='btn' style='padding-left:3px;padding-right:3px;padding-top:1px;padding-bottom:1px'><i class='icon icon-play-circle'></i></button><div id='gifv-image-" + 
+
+            $(this).after(" <button id='gifv-" + index +"' class='btn' style='padding-left:3px;padding-right:3px;padding-top:1px;padding-bottom:1px'><i class='icon icon-play-circle'></i></button><div id='gifv-image-" +
                             index + "'><video controls loop autoplay><source src=\"" + href.replace(".gifv", ".webm") + "\" type=\'video/webm; codecs=\"vp8, vorbis\"\'></video></div>");
-             
+
             $("#gifv-image-" + index).hide();
-             
-            $("#gifv-" + index).click(function() 
+
+            $("#gifv-" + index).click(function()
             {
                 $("#gifv-image-" + index).toggle();
                 if( $("#gifv-image-" + index + " > video").is(":hidden") )
@@ -242,12 +242,12 @@ if(jQuery)
                 {
                     $("#gifv-image-" + index + " > video").get(0).play();
                 }
- 
+
             });
-             
+
         });
     }
-     
+
     // Embedded Youtube
     if(enableYoutube)
     {
@@ -255,7 +255,7 @@ if(jQuery)
         $('td.msg a').each(function(i, v){
             if(ytregex.test($(this).attr('href'))) {
                 var id = ytregex.exec($(this).attr('href'))[1];
-                $(this).after(" <button id='yt-" + i +"' class='btn' style='padding-left:3px;padding-right:3px;padding-top:1px;padding-bottom:1px;'><i class='icon icon-play-circle'></i></button><div id='yt-image-" + 
+                $(this).after(" <button id='yt-" + i +"' class='btn' style='padding-left:3px;padding-right:3px;padding-top:1px;padding-bottom:1px;'><i class='icon icon-play-circle'></i></button><div id='yt-image-" +
                                 i + "'><iframe width='720' height='480' src='http://www.youtube.com/embed/" + id + "' frameborder='0' allowfullscreen></iframe>");
                 $("#yt-image-" + i).hide();
                 $("#yt-" + i).click(function() {
@@ -264,7 +264,7 @@ if(jQuery)
             }
         });
     }
-    
+
 	// Message filtering
 	if(enableFilter) {
 	function filterCallback(user) {
@@ -282,7 +282,7 @@ if(jQuery)
 		}
 
 	}
-	
+
 	var msgCount = $("td.msg").length;
 
 	for( var i = 0; i < msgCount; i++) {
@@ -292,13 +292,13 @@ if(jQuery)
 		} else {
 			$("a.qq").eq(i).parent().after("<span class='postaction'>" + "<a href='#' class='filter-" + i + "'>filter</a>");
 		}
-		
+
 		$(".filter-" + i).click(filterCallback(user));
-		
+
 	}
-	
+
 }
-	
+
     // Quote, Edit, Delete, Report... In Left of Post
     if(msgBelowLeftOfPost)
     {
@@ -306,16 +306,16 @@ if(jQuery)
         $(".msg_below").each(function(index){
             $(this).parent().prev().append($(this).detach());
         });
- 
+
         $(".message_num").each(function(index){
             $(this).parent().append($(this).detach());
         });
- 
+
         $(".edited").css("display", "block");
         $(".action_after").hide();
         $(".options").css("float", "none");
     }
-     
+
     // Render Avatars
 	if ( enableAvatars === "left")
 	{
@@ -363,60 +363,60 @@ if(jQuery)
 		});
 	}
 	// End Avatar Options
-     
+
     // Account Switcher
-     
+
     function asAddCallback(i)
     {
         return function()
         {
- 
+
             $("#asAdd").attr("disabled", "disabled");
-                         
-            _SETTINGS_.accounts.push( 
+
+            _SETTINGS_.accounts.push(
                 {
                     "name": $("#asUser-" + i).val(),
                     "pass": $("#asPass-" + i).val()
                 });
- 
-         
+
+
             localStorage.setItem("_SETTINGS_", JSON.stringify(_SETTINGS_));
             document.location = "/boards/user.php?settings=1#tabAccountSwitcher";
             location.reload(true);
-             
+
         }
     }
- 
-    function asDeleteCallback(i) 
+
+    function asDeleteCallback(i)
     {
         return function()
         {
             $("#asDeleteBtn-" + i).attr("disabled", "disabled");
-             
+
             _SETTINGS_.accounts.splice((i-1), 1);
             localStorage.setItem("_SETTINGS_", JSON.stringify(_SETTINGS_));
-             
+
             document.location = "/boards/user.php?settings=1#tabAccountSwitcher";
             location.reload(true);
- 
+
         }
     }
-     
+
     if(enableAccountSwitcher)
     {
-        function loginClickHandler(i) 
+        function loginClickHandler(i)
         {
-            return function() 
+            return function()
             {
                 var key;
-                 
+
                 $.ajax( {
                     type: "GET",
                     url: "/user/logout",
                     async: false
-                });         
-                         
-                if(!key) 
+                });
+
+                if(!key)
                 {
                     $.ajax({
                         type: "POST",
@@ -426,10 +426,10 @@ if(jQuery)
                         key = response.match(/key" value="([^"]*)"/)[1];
                     });
                 }
-                 
-                var formData = "EMAILADDR=" + _SETTINGS_.accounts[i].name + "&PASSWORD=" + _SETTINGS_.accounts[i].pass + "&key=" + 
+
+                var formData = "EMAILADDR=" + _SETTINGS_.accounts[i].name + "&PASSWORD=" + _SETTINGS_.accounts[i].pass + "&key=" +
                                 key + "&path=http://www.gamefaqs.com/";
-                 
+
                 $.ajax({
                     type: "POST",
                     url: "/user/login",
@@ -438,71 +438,71 @@ if(jQuery)
                 }).done(function() {
                     location.reload(true);
                 });
-                 
+
             }
         }
- 
+
         $(".masthead_user").append("<a href='#' id='AccountSwitch'>Account Switcher</a>");
- 
-        $("#AccountSwitch").click(function() 
+
+        $("#AccountSwitch").click(function()
         {
- 
+
             var topicForm = "<div id='AccountSwitchPanel' class='reg_dialog' style='position:fixed;left:25%;top:10%;width:50%'>" +
                                 "<div style='padding:10px;'><h3>Account Switcher</h3>" +
                                 "<p>";
-             
+
             topicForm += "<table>";
-             
+
             for(var i = 0; i < _SETTINGS_.accounts.length; i++) {
                 topicForm += "<tr><td>" + _SETTINGS_.accounts[i].name + "</td><td><button class='btn' id='asLogin-" + i + "'>Log in</button></td></tr>";
             }
-                 
-            topicForm += "<table>";       
-                                 
+
+            topicForm += "<table>";
+
             topicForm += "<br><button class='btn' id='AccountSwitchClose'>Close</button>" +
                             "</p>" +
                             "</div></div>";
- 
+
             $("body").append(topicForm);
-             
-            for(var i = 0; i < _SETTINGS_.accounts.length; i++) 
+
+            for(var i = 0; i < _SETTINGS_.accounts.length; i++)
             {
                 $("#asLogin-" + i).click(loginClickHandler(i));
             }
-             
-            $("#AccountSwitchClose").click(function() 
+
+            $("#AccountSwitchClose").click(function()
             {
                 $("#AccountSwitchPanel").remove();
             });
- 
+
         });
-         
- 
+
+
     }
-     
+
     var switcherBody = "<h3>Account Switcher Settings</h3>";
     switcherBody += "<p>Note: This is super dangerous. Passwords are saved unencrypted in localStorage. Please use this with caution. " +
                         "<b>I have no access to your account information and am not liable for anything that may happen as a result of using this feature!</b></p>";
-     
+
     switcherBody += "<table>";
- 
+
     var accNumber= 0;
-     
-    for( accNumber; accNumber < _SETTINGS_.accounts.length; accNumber++) 
+
+    for( accNumber; accNumber < _SETTINGS_.accounts.length; accNumber++)
     {
-        switcherBody += "<tr><td>Username</td><td><input id='asUser-" + (accNumber + 1) + "' style='width:100%' value=\"" + 
-                        _SETTINGS_.accounts[accNumber].name + "\"></td><td>Password</td><td><input type='password' id='asPass-" + 
-                        (accNumber + 1) + "' style='width:100%' value=\"" + _SETTINGS_.accounts[accNumber].pass + 
+        switcherBody += "<tr><td>Username</td><td><input id='asUser-" + (accNumber + 1) + "' style='width:100%' value=\"" +
+                        _SETTINGS_.accounts[accNumber].name + "\"></td><td>Password</td><td><input type='password' id='asPass-" +
+                        (accNumber + 1) + "' style='width:100%' value=\"" + _SETTINGS_.accounts[accNumber].pass +
                         "\"></td><td><button class='btn' id='asDeleteBtn-" + (accNumber + 1) + "'>Remove</button></td></tr>";
     }
- 
-    switcherBody += "<tr><td>Username</td><td><input id='asUser-" + (accNumber + 1) + "' style='width:100%' value=\"" + "" + 
-                    "\"></td><td>Password</td><td><input type='password' id='asPass-" + 
+
+    switcherBody += "<tr><td>Username</td><td><input id='asUser-" + (accNumber + 1) + "' style='width:100%' value=\"" + "" +
+                    "\"></td><td>Password</td><td><input type='password' id='asPass-" +
                     (accNumber + 1) + "' style='width:100%' value=\"" + "" + "\"></td><td><button class='btn' id='asAdd'>Add</button></td></tr>";
- 
+
     switcherBody += "</table>";
     // End Account Switcher
-     
+
 	// SIG STUFF
 	var sigBody = "<p style='float:left'>1 line break and 160 characters allowed. Just like with regular sigs.<br> If you want a signature to apply to all boards or accounts leave the field blank.<br>Multiple boards and accounts are separated by commas.</p>";
 	sigBody += " <div style='float:right'><button  class='btn btn_primary' id='sig-export'>Export Signature Data</button> ";
@@ -522,7 +522,7 @@ if(jQuery)
 		 autoOpen: false,
 		 height: "auto",
 		 width: 1100,
-	}); 
+	});
 
 	$("#okToSaveSig").click(function() {
 		var sigData = $("#sig-import-text").val();
@@ -534,50 +534,50 @@ if(jQuery)
 	$("#sigWidget").parent().addClass("reg_dialog");
 	$("#sigWidgetI").parent().addClass("reg_dialog");
 	$("button").addClass("btn");
-	
+
 	function createSigChangeMarkup(sig, index){
 		return 	"<tr class='signature-header-row'><th colspan='2'>Signature " + (index + 1) + " <input type='submit' class='sig-update btn' style='float:right; margin-left:10px;' value='Update'><input type='submit' class='sig-delete btn' style='float:right' value='Delete'></th></tr>" +
 			"<tr class='board-names-row'><td>Board Names</td><td><input class='board-names' style='width:100%' value=\"" + sig.boards + "\"></td></tr>" +
 			"<tr class='accounts-row'><td>Accounts</td><td><input class='accounts' style='width:100%' value=\"" + sig.accounts + "\"></td></tr>" +
 			"<tr class='signature-row'><td>Signature</td><td><textarea class='signature' style='width:100%'>" + sig.signature + "</textarea></td></tr>";
 	}
-	
+
 	sigBody +=	"<table id='existing-sigs'>" +
 					"<tr class='signature-header-row'><th colspan='2'> New Signature <input type='submit' class='sig-new btn' style='float:right' value='Add'></th></tr>" +
 					"<tr class='board-names-row'><td>Board Names</td><td><input class='board-names' style='width:100%'></td></tr>" +
 					"<tr class='accounts-row'><td>Accounts</td><td><input class='accounts' style='width:100%'></td></tr>" +
 					"<tr class='signature-row'><td>Signature</td><td><textarea class='signature' style='width:100%'></textarea></td></tr>";
-	
+
 	_SETTINGS_.signatures.forEach(function(sig, index){
 		sigBody += createSigChangeMarkup(sig, index);
 	});
-	
+
 	sigBody += "</table><br>";
 	// END OF SIG STUFF
-	
+
 	// Link to the Settings Page
-    $(".masthead_user").prepend("<span class='masthead_mygames_drop'><a href='/boards/user.php?settings=1'>xFAQs Settings <i class='icon icon-cog'></i>" + 
-                                "</a><ul class='masthead_mygames_subnav' style='width:200px;left:-1px;'><li class='masthead_mygames_subnav_item'>" + 
+    $(".masthead_user").prepend("<span class='masthead_mygames_drop'><a href='/boards/user.php?settings=1'>xFAQs Settings <i class='icon icon-cog'></i>" +
+                                "</a><ul class='masthead_mygames_subnav' style='width:200px;left:-1px;'><li class='masthead_mygames_subnav_item'>" +
                                 "<a href='/boards/565885-blood-money/'>xFAQs Help</a></li></ul></span> ");
- 
-     
+
+
     // Renders the Settings Page.
-    if((decodeURIComponent((new RegExp('[?|&]' + "settings" + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20')) == "1") 
-        && (location.pathname == "/user")) 
+    if((decodeURIComponent((new RegExp('[?|&]' + "settings" + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20')) == "1")
+        && (location.pathname == "/user"))
     {
         $(".span4").remove();
         $(".span8").css("width", "100%");
-         
- 
+
+
         $(".page-title").html("xFAQs Settings");
         $(".userinfo").css("border", "none");
         $(".title").remove();
         $(".head").remove();
-         
+
         // Preparing for the UI
         $("table.board").empty().append('<thead></thead>').append('<tbody></tbody>');
-		$('#js_content_nav').remove();   
-         
+		$('#js_content_nav').remove();
+
                 $("tbody").append( "<div id='xfaqs-tabs'>" +
                                 "<ul class='content_nav content_nav_wrap'>" +
                                 "<li class='cnav_item' style='border-radius: 5px; cursor: pointer;'><a href='#news'>News</a></li>" +
@@ -587,12 +587,12 @@ if(jQuery)
                                 "<li class='cnav_item' style='border-radius: 5px; cursor: pointer;'><a href='#tabs-4'>Ignore List+</a></li>" +
                                 "<li class='cnav_item' style='border-radius: 5px; cursor: pointer;'><a href='#tabs-5'>Rotating Signatures</a></li>" +
                                 "<li class='cnav_item' style='border-radius: 5px; cursor: pointer;'><a href='#tabAccountSwitcher'>Account Switcher</a></li>" +
-								
+
                                 "<li class='cnav_item' style='border-radius: 5px; cursor: pointer;'><a href='#tabs-6'>About</a></li>" +
                                 "</ul>" +
-                                
+
                                 "<div id='news' style='padding-top:20px'></div>" +
-                                
+
                                 "<div id='settings' style='padding-top:20px'>" +
                                     "<table class='contrib'>" +
                                         "<tr><th colspan='2'>General Settings</th></tr>" +
@@ -605,18 +605,18 @@ if(jQuery)
                                         "<tr><td style='width:50%'>Embedded Images</td><td><input type='checkbox' id='enableImages'></td></tr>" +
                                         "<tr><td style='width:50%'>Embedded Youtube</td><td><input type='checkbox' id='enableYoutube'></td></tr>" +
                                         "<tr><td style='width:50%'>quote, edit, ect. in Message Display Left <i class='icon icon-question-sign' title='Note: If this is enabled while in Message Display Above mode, things will look weird'></i></td><td><input type='checkbox' id='msgBelowLeftOfPost'></td></tr>" +
-                                        "<tr><td style='width:50%'>GameFAQs Avatars</td><td>" + 
-                                        "<select id='enableAvatars'><option value='disabled'>Disabled</option>" + 
+                                        "<tr><td style='width:50%'>GameFAQs Avatars</td><td>" +
+                                        "<select id='enableAvatars'><option value='disabled'>Disabled</option>" +
                                         "<option value='left'>Left</option>" +
-                                        "<option value='right'>Right</option></select></td></tr>" +										
+                                        "<option value='right'>Right</option></select></td></tr>" +
                                         "<tr><td style='width:50%'>Account Switcher</td><td><input type='checkbox' id='enableAccountSwitcher'></td></tr>" +
-                                        "<tr><td style='width:50%'>Rotating Sigs</td><td><input type='checkbox' id='enableRotatingSigs'></td></tr>" +	
-                                        "<tr><td style='width:50%'>Quick Topic</td><td><input type='checkbox' id='enableQuickTopic'></td></tr>" +																														
+                                        "<tr><td style='width:50%'>Rotating Sigs</td><td><input type='checkbox' id='enableRotatingSigs'></td></tr>" +
+                                        "<tr><td style='width:50%'>Quick Topic</td><td><input type='checkbox' id='enableQuickTopic'></td></tr>" +
                                         "<tr><td colspan='2'><input type='submit' id='updateGeneral' class='btn' value='Update xFAQs Settings'></td></tr>" +
                                     "</table>" +
                                 "</div>" +
-                                
-                                
+
+
                                "<div id='avatars' style='padding-top:20px'>" +
                                     "<div style='float:left; width:100px; height:100px;'><img class='avatar' src='http://avatarfaqs.pcriot.com/avatars/" + _USER_ + ".png' alt='' ></div>" +
                                     "<div style='float:left; padding-left:10px'><h4>GameFAQs Avatars</h4> <ul id=settings class='paginate user' style='margin:0;padding:0;'> " +
@@ -637,18 +637,18 @@ if(jQuery)
                                //"<div id='tabs-6' style='padding-top:20px'>" + aboutBody + "</div>" +
                                "<div id='tabAccountSwitcher' style='padding-top:20px'>" + switcherBody + "</div>" +
                             "</div>");
- 
+
 	// MORE SIG STUFF
 		function sigClickCallback($entry, index) {
 			var sigText = $entry.nextAll('.signature-row').first().find('.signature').val();
 			var sigLines = (sigText.match(/\n/g)||[]).length;
 			var sigCharacters = sigText.length + sigLines;
-		
+
 			if((sigLines > 1) || (sigCharacters > 160)) {
 				alert("Signature is too long. " + sigLines + " breaks and " + sigCharacters + " characters.");
 				return;
 			}
-			
+
 			var boardNameArray = $entry.nextAll('.board-names-row').first().find('.board-names').val().split(/ *, */);
 			var accountNameArray = $entry.nextAll('.accounts-row').first().find('.accounts').val().split(/ *, */);
 			var newSigData = {
@@ -656,7 +656,7 @@ if(jQuery)
 				"accounts": accountNameArray,
 				"signature": sigText
 			};
-			
+
 			if (index === undefined) { // Adding a new sig
 				_SETTINGS_.signatures.push(newSigData);
 				$entry.closest('tbody').append(createSigChangeMarkup(newSigData,_SETTINGS_.signatures.length - 1));
@@ -666,7 +666,7 @@ if(jQuery)
 				_SETTINGS_.signatures[index] = newSigData;
 				$entry.find('.sig-update').val('Updated.');
 			}
-			
+
 			localStorage.setItem("_SETTINGS_", JSON.stringify(_SETTINGS_));
 		}
 
@@ -675,29 +675,29 @@ if(jQuery)
 			_SETTINGS_.signatures.splice((i-1), 1);
 			localStorage.setItem("_SETTINGS_", JSON.stringify(_SETTINGS_));
 		}
-		
+
 		$('#existing-sigs').on('click', '.sig-update', function(){sigClickCallback($(this).closest('tr'), $('#existing-sigs .sig-update').index(this));});
 		$('#existing-sigs').on('click', '.sig-new', function(){sigClickCallback($(this).closest('tr'));});
 		$('#existing-sigs').on('click', '.sig-delete', function(){sigDeleteCallback($(this).closest('tr'), $('#existing-sigs .sig-delete').index(this));});
 		$("#sig-export").click(function(){$("#sigWidget").dialog("open");});
 		$("#sig-import").click(function(){$("#sigWidgetI").dialog("open");});
 		// END OF MORE SIG STUFF
-		
+
     }
-     
+
     // More Account Switcher
     $("#asAdd").click(asAddCallback(accNumber + 1));
- 
-    for(var i = 0; i < accNumber; i++) 
+
+    for(var i = 0; i < accNumber; i++)
     {
         $("#asDeleteBtn-" + (i + 1)).click(asDeleteCallback(i + 1));
     }
     // End More Account Switcher
-         
+
     $(function() {
         $("#xfaqs-tabs").tabs();
     });
-     
+
     // "Load Settings"
     $(function() {
         $("#enableAMP").prop('checked', _SETTINGS_.settings[0].enableAMP);
@@ -712,9 +712,9 @@ if(jQuery)
         $("#enableAvatars").val(_SETTINGS_.settings[0].enableAvatars);
         $("#enableAccountSwitcher").prop('checked', _SETTINGS_.settings[0].enableAccountSwitcher);
         $("#enableRotatingSigs").prop('checked', _SETTINGS_.settings[0].enableRotatingSigs);
-        $("#enableQuickTopic").prop('checked', _SETTINGS_.settings[0].enableQuickTopic);				
+        $("#enableQuickTopic").prop('checked', _SETTINGS_.settings[0].enableQuickTopic);
     });
- 
+
     // "Save Settings"
     $("#updateGeneral").button();
     $("#updateGeneral").click(function(event) {
@@ -729,76 +729,76 @@ if(jQuery)
         _SETTINGS_.settings[0].msgBelowLeftOfPost = $('#msgBelowLeftOfPost').is(":checked");
         _SETTINGS_.settings[0].enableAvatars = $('#enableAvatars').val()
         _SETTINGS_.settings[0].enableAccountSwitcher = $('#enableAccountSwitcher').is(":checked");
-        _SETTINGS_.settings[0].enableRotatingSigs = $('#enableRotatingSigs').is(":checked");		
-        _SETTINGS_.settings[0].enableQuickTopic = $('#enableQuickTopic').is(":checked");				
+        _SETTINGS_.settings[0].enableRotatingSigs = $('#enableRotatingSigs').is(":checked");
+        _SETTINGS_.settings[0].enableQuickTopic = $('#enableQuickTopic').is(":checked");
         localStorage.setItem("_SETTINGS_", JSON.stringify(_SETTINGS_));
         document.location = "/boards/user.php?settings=1#settings";
         location.reload(true);
     });
     // End Settings Page
- 
+
 	// ajax call to load the news page
 	$.ajax( {
 		url: "http://avatarfaqs.pcriot.com/xfaqsnews.php",
 		dataType: "html",
 		type: "GET",
 	})
-	.done(function( data ) 
+	.done(function( data )
 	{
 		$("#news").html(data);
 	})
-	.error(function() 
+	.error(function()
 	{
 		$("#news").html("There's no news. Ask Blood Money what we're up to.");
-	});     
- 
+	});
+
     // Remove any broken images at the end.
     $('img').error(function () {
         $(this).hide();
     });
-     
+
     // Avatars stuff
     $("#file").change(function() {
         var file = this.files[0];
         var size = file.size;
         var type = file.type;
-         
+
         if( !type.match(/image.*/) ) {
             $("#submit_btn").css("display", "none");
             $("#server_message").html("Invalid File Type");
-            return;     
+            return;
         }
-         
+
         if( size > 204800 ) {
             $("#submit_btn").css("display", "none");
             $("#server_message").html("Image is too big (" + size/1024 + "KB). 200KB maximum.");
             return;
         }
-         
+
         if( !_USER_ ) {
             $("#submit_btn").css("display", "none");
             $("#server_message").html("Log in to upload avatars.");
         }
-         
+
         $("#submit_btn").css("display", "inline");
         $("#server_message").html("OK");
     });
-     
+
     // ajax request that handles the upload.
     // For the love of god do not modify this. Bad things will happen.
- 
+
     $("#submit_btn").click( function() {
         var formData = new FormData($('#submit')[0]);
- 
+
         $("#server_message").html("backing up signature...");
- 
+
         $.ajax
         ({
             type: "POST",
             url: "/boards/sigquote.php",
             async: false,
         })
-        .done(function(response) 
+        .done(function(response)
         {
             var sig = $(response).find("#sig").text();
             var quote = $(response).find("#quote").text();
@@ -807,23 +807,23 @@ if(jQuery)
             //console.log(sig);
             //console.log(key);
             //console.log(sigpost);
- 
- 
+
+
             if((sig == "upload:ok") || (sig == "avatarupload:true"))
             {
                 // replace old signature
                 sig = "";
             }
- 
+
             $("#server_message").html("Sending permission to change sig");
- 
+
             $.ajax
             ({
                 type: "POST",
                 url: sigpost,
                 data: "key=" + key + "&sig=" + "avatarupload:true" + "&quote=" + quote + "&submit=Change Settings",
             })
-            .done(function(response) 
+            .done(function(response)
             {
                 $("#server_message").html("Uploading...");
                 $.ajax( {
@@ -835,7 +835,7 @@ if(jQuery)
                     contentType: false,
                     async: false
                 }).done(function( data ) {
-                    if( data == 'Upload Successful!') 
+                    if( data == 'Upload Successful!')
                     {
                         $.ajax
                         ({
@@ -843,7 +843,7 @@ if(jQuery)
                             url: sigpost,
                             data: "key=" + key + "&sig=" + sig + "&quote=" + quote + "&submit=Change Settings",
                         })
-                        .done(function(response) 
+                        .done(function(response)
                         {
                             //console.log("Sig changed back.");
                             $("#server_message").html(data);
@@ -851,14 +851,14 @@ if(jQuery)
                             location.reload(true);
                         });
                     }
-                    else 
+                    else
                     {
                         $.ajax
                         ({
                             type: "POST",
                             url: sigpost,
                             data: "key=" + key + "&sig=" + sig + "&quote=" + quote + "&submit=Change Settings",
-                        }).done(function(response) 
+                        }).done(function(response)
                         {
                             //console.log("Sig changed back.");
                         });
@@ -871,7 +871,7 @@ if(jQuery)
                         url: sigpost,
                         data: "key=" + key + "&sig=" + sig + "&quote=" + quote + "&submit=Change Settings",
                     })
-                    .done(function(response) 
+                    .done(function(response)
                     {
                         //console.log("Sig changed back.");
                     });
@@ -881,31 +881,31 @@ if(jQuery)
         });
     });
     // End Avatars Stuff
- 
+
 	// Rotating sigs
 	if ( enableRotatingSigs ) {
 		var sigList = _SETTINGS_.signatures;
 		var board = $('.page-title').html().trim();
 		if ( sigList ) {
 			var filteredSigList = sigList.filter(function(sig) {
-				return (sig.boards[0] === "" || sig.boards.indexOf(board) !== -1) && 
+				return (sig.boards[0] === "" || sig.boards.indexOf(board) !== -1) &&
 						(sig.accounts[0] === "" || sig.accounts.indexOf(_USER_) !== -1);
 			});
 			if (filteredSigList.length) {
 				var randomSig = filteredSigList[Math.floor(Math.random() * filteredSigList.length)].signature;
-				$("input[name='custom_sig']").after("<div class='head'><h2 class='title'>Custom Signature</h2></div>" + 
+				$("input[name='custom_sig']").after("<div class='head'><h2 class='title'>Custom Signature</h2></div>" +
 													"<textarea name='custom_sig' rows='2' cols='100' style='width:100%;'></textarea>");
 				$("input[name='custom_sig']").remove();
 				$("textarea[name='custom_sig']").val(randomSig);
 			}
 		}
 	}
- 
+
     // Hotkeys
     $("input[value='Post Message']").attr("accesskey", "z");
     $("input[value='Preview Message']").attr("accesskey", "x");
- 
-	// Formatting	
+
+	// Formatting
 	function txtTagEdit(tag) {
 		var msgAreaEdit = document.getElementsByName('messagetext')[0];
 		var currTag = document.getElementsByName(tag)[0];
@@ -958,7 +958,7 @@ if(jQuery)
 					</span>';
 
 
-	if($(".tagbuttons").size()) 
+	if($(".tagbuttons").size())
 	{
 		$(".tagbuttons").html(formatter);
 		$('[name="b"]').click(function() {txtTagEdit('b');});
@@ -969,22 +969,22 @@ if(jQuery)
 		$('[name="code"]').click(function() {txtTagEdit('code');});
 		$('[name="strike"]').click(function() {txtTagEdit('strike');});
 
-	}	
- 
+	}
+
 	// Quick Topic
 	if(enableQuickTopic) {
 		if($(".action").eq(0).text() == " New Topic") {
 			var key;
 			var postUrl = $(".action > a").attr("href");
 
-			
 
-			
+
+
 			$(".paginate.user").append("<li id='topicToggle' class='action' ><a href='#' class='qt-action'>Quick Topic</a></li>");
-			
+
 			$("#topicToggle").click(function() {
 				if(!$("#topicForm").html()) {
-				
+
 					if(!key) {
 						$.ajax({
 							type: "POST",
@@ -994,7 +994,7 @@ if(jQuery)
 							key = response.match(/key" value="([^"]*)"/)[1];
 						});
 					}
-					
+
 					var topicForm = '<div id="quickTopic" class="reg_dialog" style="position:fixed;left:25%;top:10%;width:50%"><form method="post" id="topicForm" action="' + $(".action > a").attr("href") + '"><input type="hidden" value="' + key + '" name="key"> \
 											<div class="pod"> \
 													<div class="body"> \
@@ -1008,9 +1008,9 @@ if(jQuery)
 												</div> \
 											</div> \
 										</form></div>';
-										
+
 					$("body").append(topicForm);
-					
+
 					$('[name="b"]').click(function() {txtTagEdit('b');});
 					$('[name="i"]').click(function() {txtTagEdit('i');});
 					$('[name="spoiler"]').click(function() {txtTagEdit('spoiler');});
@@ -1020,20 +1020,20 @@ if(jQuery)
 					$('[name="strike"]').click(function() {txtTagEdit('strike');});
 					$('[name="underline"]').click(function() {txtTagEdit('underline');});
 
-					
+
 					$("#qt-close").click(function() {
 						$("#quickTopic").remove();
 					});
-			
+
 				} else {
 					$("#quickTopic").remove();
-				}			
+				}
 
 			});
-			
+
 		}
-	}	
-	
+	}
+
 }
 else
 {
