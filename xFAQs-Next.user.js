@@ -508,7 +508,7 @@ if(jQuery)
                                         "<input class='btn btn_primary' type='button' id='submit_btn' value='Upload'> " +
                                         "<input style='display:none' type='text' name='dest' value='GameFAQs-Avatars'> " +
                                         "<input style='display:none' type='text' name='user' value='" + upload_user + "'> " +
-                                        "<span id='server_message'>Maximum File Size: 200KB</span> " +
+                                        "<span id='server_message'>Maximum dimensions: 100x100 pixels.  Maximum File Size: 200KB</span> " +
                                         "</form></div>" +
                                         "<div style='clear:both;padding-top:30px;'>Upload an avatar, and select upload. If your upload fails, then you will get a message telling you why.<br>\
                                         Please note: This process modifies your signature, however you should get your old signature back.<br>\
@@ -632,6 +632,7 @@ if(jQuery)
             location.reload(true);
         }
         $("#update-general").click(saveSettingsConfig);
+        loadSettingsConfig();
 
         // End Settings Page
     }
@@ -730,7 +731,7 @@ if(jQuery)
     if (_SETTINGS_.settings[0].enableRotatingSigs) {
         var sigList = _SETTINGS_.signatures;
         var board = $('.page-title').html().trim();
-        if ( sigList ) {
+        if (sigList) {
             var filteredSigList = sigList.filter(function(sig) {
                 return (sig.boards[0] === "" || sig.boards.indexOf(board) !== -1) &&
                         (sig.accounts[0] === "" || sig.accounts.indexOf(_USER_) !== -1);
@@ -749,7 +750,7 @@ if(jQuery)
     $("input[value='Post Message']").attr("accesskey", "z");
     $("input[value='Preview Message']").attr("accesskey", "x");
 
-    // Formatting buttons while posting
+    // Formatting buttons for quick topic
     function txtTagEdit(tag) {
         var msgAreaEdit = document.getElementsByName('messagetext')[0];
         var currTag = document.getElementsByName(tag)[0];
