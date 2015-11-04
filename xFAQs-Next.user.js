@@ -17,9 +17,8 @@
 
 
 // Note: jQuery is provided by GameFAQs by default. I will be using it a lot in this code.
-if(jQuery)
-{
-    function getSettings(){
+if(jQuery) {
+    function getSettings() {
         // Returns a variable which contains user settings
         var _SETTINGS_;
 
@@ -750,137 +749,95 @@ if(jQuery)
     $("input[value='Post Message']").attr("accesskey", "z");
     $("input[value='Preview Message']").attr("accesskey", "x");
 
-    // Formatting buttons for quick topic
-    function txtTagEdit(tag) {
-        var msgAreaEdit = document.getElementsByName('messagetext')[0];
-        var currTag = document.getElementsByName(tag)[0];
-        var tagStart = "<"+tag+">";
-        var tagEnd = "</"+tag+">";
-        var c = msgAreaEdit.selectionStart;
-        var selPre = msgAreaEdit.value.substr(0,c);
-        var selPost = msgAreaEdit.value.substr(msgAreaEdit.selectionEnd);
-        var selTxt;
-
-        if(c!=undefined)
-        {
-            selTxt = msgAreaEdit.value.substr(c,msgAreaEdit.selectionEnd-c);
-        }
-        if(selTxt.length<1)
-        {
-            if(currTag.className.indexOf('active')>0)
-            {
-                msgAreaEdit.value = [msgAreaEdit.value.slice(0,c),tagEnd,msgAreaEdit.value.slice(c)].join('');
-                var rm = currTag.className.indexOf(' active');
-                var p = c+tagEnd.length;
-                currTag.className = currTag.className.substr(0,rm);
-                currTag.style.color = '#000';
-                setPos(msgAreaEdit,p);
-            }
-            else
-            {
-                msgAreaEdit.value = [msgAreaEdit.value.slice(0,c),tagStart,msgAreaEdit.value.slice(c)].join('');
-                var p = c+tagStart.length;
-                currTag.className += " active";
-                currTag.style.color = '#6564ff';
-                setPos(msgAreaEdit,p);
-            }
-        }
-        else
-        {
-            msgAreaEdit.value = selPre+tagStart+selTxt+tagEnd+selPost;
-            var p = c+tagStart.length+selTxt.length+tagEnd.length;
-            setPos(msgAreaEdit,p);
-        }
-    }
-
-    var formatter = '<span class="tagbuttons"> \
-                        <input type="button"  value="Bold" class="btn btn_mini btnbold" name="b" tabindex="-1"> \
-                        <input type="button"  value="Italic" class="btn btn_mini btnitalic" name="i" tabindex="-1"> \
-                        <input type="button"  value="Spoiler" class="btn btn_mini" name="spoiler" tabindex="-1"> \
-                        <input type="button"  value="Cite" class="btn btn_mini btncite" name="cite" tabindex="-1"> \
-                        <input type="button"  value="Quote" class="btn btn_mini" name="quote" tabindex="-1"> \
-                        <input type="button"  value="Code" class="btn btn_mini btncode" name="code" tabindex="-1"> \
-                    </span>';
-
-
-    if($(".tagbuttons").size())
-    {
-        $(".tagbuttons").html(formatter);
-        $('[name="b"]').click(function() {txtTagEdit('b');});
-        $('[name="i"]').click(function() {txtTagEdit('i');});
-        $('[name="spoiler"]').click(function() {txtTagEdit('spoiler');});
-        $('[name="cite"]').click(function() {txtTagEdit('cite');});
-        $('[name="quote"]').click(function() {txtTagEdit('quote');});
-        $('[name="code"]').click(function() {txtTagEdit('code');});
-        $('[name="strike"]').click(function() {txtTagEdit('strike');});
-
-    }
-
     // Add quick topic to topic list
-    if(_SETTINGS_.settings[0].enableQuickTopic) {
-        if($(".action").eq(0).text() == " New Topic") {
-            var key;
-            var postUrl = $(".action > a").attr("href");
+    if(_SETTINGS_.settings[0].enableQuickTopic)
+        addQuickTopic();
 
+    // Formatting buttons for quick topic
+    function addQuickTag() {
+        var msgAreaEdit = document.getElementsByName('messagetext')[0];
+        var currTag = $(this);
+        var tagStart = '<' + this.name + '>';
+        var tagEnd = '</' + this.name + '>';
+        var c = msgAreaEdit.selectionStart;
+        var selPre = msgAreaEdit.value.substr(0, c);
+        var selPost = msgAreaEdit.value.substr(msgAreaEdit.selectionEnd);
+        var selTxt = msgAreaEdit.value.substr(c, msgAreaEdit.selectionEnd-c);
 
+        if (selTxt.length < 1) {
+            if (currTag.hasClass('active')) { // Add the ending tag
+                msgAreaEdit.value = [msgAreaEdit.value.slice(0, c), tagEnd, msgAreaEdit.value.slice(c)].join('');
+                currTag.css('color', '#000');
+                msgAreaEdit.setSelectionRange(c + tagEnd.length, c + tagEnd.length);
+            } else { // Add the starting tag
+                msgAreaEdit.value = [msgAreaEdit.value.slice(0, c),tagStart,msgAreaEdit.value.slice(c)].join('');
+                currTag.css('color', '#6564ff');
+                msgAreaEdit.setSelectionRange(c + tagStart.length, c + tagStart.length);
+            }
+            currTag.toggleClass('active');
+        } else {  // Enclose the selected text in tags
+            msgAreaEdit.value = selPre + tagStart + selTxt + tagEnd + selPost;
+            msgAreaEdit.setSelectionRange(c + tagStart.length + selTxt.length + tagEnd.length, c + tagStart.length + selTxt.length + tagEnd.length);
+        }
+        msgAreaEdit.focus();
+    }
 
+    function addQuickTopic() {
+        if ($(".action:first").text() !== " New Topic") return; // Only allow quick topic if the user can usually make topics
+        var key;
+        var postUrl = $(".action > a").attr("href");
+        var tagButtons = '<span class="tagbuttons">' +
+                        '<input type="button"  value="Bold" class="btn btn_mini btnbold" name="b" tabindex="-1">' +
+                        '<input type="button"  value="Italic" class="btn btn_mini btnitalic" name="i" tabindex="-1">' +
+                        '<input type="button"  value="Spoiler" class="btn btn_mini" name="spoiler" tabindex="-1">' +
+                        '<input type="button"  value="Cite" class="btn btn_mini btncite" name="cite" tabindex="-1">' +
+                        '<input type="button"  value="Quote" class="btn btn_mini" name="quote" tabindex="-1">' +
+                        '<input type="button"  value="Code" class="btn btn_mini btncode" name="code" tabindex="-1">' +
+                        '</span>';
 
-            $(".paginate.user").append("<li id='topicToggle' class='action' ><a href='#' class='qt-action'>Quick Topic</a></li>");
+        $(".paginate.user").append("<li id='topicToggle' class='action' ><a href='#' class='qt-action'>Quick Topic</a></li>");
 
-            $("#topicToggle").click(function() {
-                if(!$("#topicForm").html()) {
+        $("#topicToggle").click(function() {
+            if ($('#quickTopic').length) { // Clicking quick topic while popup is open should close it
+                $("#quickTopic").remove();
+                return;
+            }
 
-                    if(!key) {
-                        $.ajax({
-                            type: "POST",
-                            url: postUrl,
-                            async: false
-                        }).done(function(response) {
-                            key = response.match(/key" value="([^"]*)"/)[1];
-                        });
-                    }
-
-                    var topicForm = '<div id="quickTopic" class="reg_dialog" style="position:fixed;left:25%;top:10%;width:50%"><form method="post" id="topicForm" action="' + $(".action > a").attr("href") + '"><input type="hidden" value="' + key + '" name="key"> \
-                                            <div class="pod"> \
-                                                    <div class="body"> \
-                                                        <div class="details"> \
-                                                            <p><b>Topic Title:</b> \
-                                                            <input id="quickTopicTitle" type="text" onkeyup="sub_cc(this.form.topictitle)" value="" name="topictitle" maxlength="80" size="70"><br> \
-                                                        <p>' + formatter + '<textarea id="quickTopicPost" onkeyup="msg_cc(this.form.messagetext)" name="messagetext" rows="20" cols="100" style="width: 100%;"></textarea></p> \
-                                                        <div class="head"><h2 class="title" style="font-family: &quot;nimbus-sans&quot;,&quot;Helvetica Neue&quot;,&quot;HelveticaNeue&quot;,Arial,sans-serif; font-weight: 700; letter-spacing: -1px; text-transform: none;">Custom Signature</h2></div><textarea cols="100" rows="2" name="custom_sig" style="width: 100%;"></textarea> \
-                                                        <input style="margin-top:10px;" type="submit" id="postMsg" name="post" value="Post without Preview" class="btn btn_primary"> <input style="margin-top:10px;" type="reset" onclick="return confirm(\'Are you sure? This will clear your entire post so far.\')" class="btn" name="reset" value="Reset"> <input style="margin-top:10px;" type="button" id="qt-close" class="btn" name="close" value="Close">\
-                                                    </div> \
-                                                </div> \
-                                            </div> \
-                                        </form></div>';
-
-                    $("body").append(topicForm);
-
-                    $('[name="b"]').click(function() {txtTagEdit('b');});
-                    $('[name="i"]').click(function() {txtTagEdit('i');});
-                    $('[name="spoiler"]').click(function() {txtTagEdit('spoiler');});
-                    $('[name="cite"]').click(function() {txtTagEdit('cite');});
-                    $('[name="quote"]').click(function() {txtTagEdit('quote');});
-                    $('[name="code"]').click(function() {txtTagEdit('code');});
-                    $('[name="strike"]').click(function() {txtTagEdit('strike');});
-                    $('[name="underline"]').click(function() {txtTagEdit('underline');});
-
-
-                    $("#qt-close").click(function() {
-                        $("#quickTopic").remove();
-                    });
-
-                } else {
-                    $("#quickTopic").remove();
-                }
-
+            $.ajax({
+                type: "POST",
+                url: postUrl,
+            }).done(function(response) {
+                key = response.match(/key" value="([^"]*)"/)[1];
+                $('#topicForm input:first').val(key);
             });
 
-        }
-    }
+            var topicForm = '<div id="quickTopic" class="reg_dialog" style="position:fixed;left:25%;top:10%;width:50%">' +
+                                '<form method="post" id="topicForm" action="' + postUrl + '"><input type="hidden" value="' + key + '" name="key">' +
+                                    '<div class="pod">' +
+                                            '<div class="body">' +
+                                                '<div class="details">' +
+                                                    '<p><b>Topic Title:</b>' +
+                                                    '<input id="quickTopicTitle" type="text" name="topictitle" maxlength="80" size="70"></p>' +
+                                                    '<p>' + tagButtons + '<textarea id="quickTopicPost" name="messagetext" rows="20" cols="100" style="width: 100%;"></textarea></p>' +
+                                                '<div class="head"><h2 class="title" style="font-family: \'nimbus-sans\',\'Helvetica Neue\',\'HelveticaNeue\',Arial,sans-serif; font-weight: 700; letter-spacing: -1px; text-transform: none;">Custom Signature</h2></div>' +
+                                                '<textarea cols="100" rows="2" name="custom_sig" style="width: 100%;"></textarea>' +
+                                                '<input style="margin-top:10px;" type="submit" id="postMsg" name="post" value="Post without Preview" class="btn btn_primary">' +
+                                                '<input style="margin-top:10px;" type="reset" onclick="return confirm(\'Are you sure? This will clear your entire post so far.\')" class="btn" name="reset" value="Reset">' +
+                                                '<input style="margin-top:10px;" type="button" id="qt-close" class="btn" name="close" value="Close">' +
+                                            '</div>' +
+                                        '</div>' +
+                                    '</div>' +
+                                '</form>' +
+                            '</div>';
 
+            $("body").append(topicForm);
+            $(".tagbuttons input").click(addQuickTag);
+
+            $("#qt-close").click(function() {
+                $("#quickTopic").remove();
+            });
+        });
+    }
 }
 else
-{
     alert("jQuery is Required to use xFAQs-Next.");
-}
