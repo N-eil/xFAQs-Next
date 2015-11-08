@@ -26,7 +26,7 @@ function getSettings() {
     // Returns a variable which contains user settings
     var _SETTINGS_;
 
-    if( localStorage.getItem("_SETTINGS_") != null ) { //Load existing settings from localStorage
+    if( localStorage.getItem("_SETTINGS_") !== null ) { //Load existing settings from localStorage
         _SETTINGS_ = JSON.parse(localStorage.getItem("_SETTINGS_"));
 
         // Automatically import signatures from old xFAQs if they don't have any set here
@@ -117,7 +117,7 @@ function onSettingsPage() {
 }
 
 // Fills the checkboxes on the general settings tab with the current settings
-function loadSettingsCheckboxes() {
+function loadSettingsCheckboxes(_SETTINGS_) {
     $("#enableAMP").prop('checked', _SETTINGS_.settings[0].enableAMP);
     $("#enablePopular").prop('checked', _SETTINGS_.settings[0].enablePopular);
     $("#searchTopics").prop('checked', _SETTINGS_.settings[0].searchTopics);
@@ -135,7 +135,7 @@ function loadSettingsCheckboxes() {
 }
 
 // Saves settings from the general settings tab
-function saveSettingsCheckboxes() {
+function saveSettingsCheckboxes(_SETTINGS_) {
     _SETTINGS_.settings[0].enableAMP = $('#enableAMP').is(":checked");
     _SETTINGS_.settings[0].enablePopular = $('#enablePopular').is(":checked");
     _SETTINGS_.settings[0].searchTopics = $('#searchTopics').is(":checked");
@@ -145,7 +145,7 @@ function saveSettingsCheckboxes() {
     _SETTINGS_.settings[0].enableImages = $('#enableImages').is(":checked");
     _SETTINGS_.settings[0].enableYoutube = $('#enableYoutube').is(":checked");
     _SETTINGS_.settings[0].msgBelowLeftOfPost = $('#msgBelowLeftOfPost').is(":checked");
-    _SETTINGS_.settings[0].enableAvatars = $('#enableAvatars').val()
+    _SETTINGS_.settings[0].enableAvatars = $('#enableAvatars').val();
     _SETTINGS_.settings[0].enableAccountSwitcher = $('#enableAccountSwitcher').is(":checked");
     _SETTINGS_.settings[0].enableRotatingSigs = $('#enableRotatingSigs').is(":checked");
     _SETTINGS_.settings[0].enableQuickTopic = $('#enableQuickTopic').is(":checked");
@@ -165,7 +165,6 @@ function createSettingsPage(_SETTINGS_, _USER_, _AVATARDOMAIN_) {
     $(".title").remove();
     $(".head").remove();
     $('#js_content_nav').remove();
-
 
     $("table.board").empty().append('<thead></thead>').append('<tbody></tbody>');
     $(".page-title").html("xFAQs Settings");
@@ -220,9 +219,9 @@ function createSettingsPage(_SETTINGS_, _USER_, _AVATARDOMAIN_) {
                             "<input style='display:none' type='text' name='user' value='" + _USER_ + " '> " +
                             "<span id='server_message'>Maximum dimensions: 100x100 pixels.  Maximum File Size: 200KB</span> " +
                             "</form></div>" +
-                            "<div style='clear:both;padding-top:30px;'>Upload an avatar, and select upload. If your upload fails, then you will get a message telling you why.<br>\
-                            Please note: This process modifies your signature, however you should get your old signature back.<br>\
-                            If your signature is set to upload:ok it will be removed.</div>" +
+                            "<div style='clear:both;padding-top:30px;'>Upload an avatar, and select upload. If your upload fails, then you will get a message telling you why.<br>" +
+                            "Please note: This process modifies your signature, however you should get your old signature back.<br>" +
+                            "If your signature is set to upload:ok it will be removed.</div>" +
                    "</div>" +
                    //"<div id='tabs-3' style='padding-top:20px'>" + highlightBody + "</div>" +
                    //"<div id='tabs-4' style='padding-top:20px'>" + ignoreBody + "</div>" +
@@ -239,7 +238,6 @@ function generateAccountSwitcherBody(accounts) {
                         "<b>I have no access to your account information and am not liable for anything that may happen as a result of using this feature!</b></p>";
 
     switcherBody += '<table id="account-list">';
-
 
     switcherBody += '<tr class="acount-switcher-row">' +
                         '<td>Username</td>' +
@@ -294,12 +292,11 @@ function generateRotatingSigsBody(sigs) {
     });
 
     sigBody += "</table><br>";
-
     return sigBody;
 }
 
 // Add the popup windows for sig import and export on the settings page
-function addSigImportExport() {
+function addSigImportExport(_SETTINGS_) {
     // Sig Export Widget.
     $("body").append("<div id='sigWidget' style='display:none'><p>Save this text data in a text file</p><textarea id='sigbackup' style='width:100%; height:500px;' readonly>" + JSON.stringify(_SETTINGS_.signatures, null, "\t") + "</textarea></div>");
     $("#sigWidget").dialog({
@@ -376,9 +373,7 @@ function addSigChangeHandlers(_SETTINGS_) {
 }
 
 // Add handlers for account switcher settings tab
-
 function addAccountSwitcherHandlers(_SETTINGS_) {
-    // More Account Switcher
     function asAddCallback($entry) {
         _SETTINGS_.accounts.push(
             {
@@ -398,7 +393,6 @@ function addAccountSwitcherHandlers(_SETTINGS_) {
         location.reload(true);
     }
 
-    // Account switcher click handlers, should go after xfaqs settings markup is appended
     $('#account-list').on('click', '.account-new', function(){asAddCallback($(this).closest('tr'));});
     $('#account-list').on('click', '.account-remove', function(){asDeleteCallback($('#account-list .account-remove').index(this));});
 }
@@ -632,7 +626,7 @@ function addAvatarUploadHandlers(_USER_, _AVATARDOMAIN_) {
                 type: "POST",
                 url: sigpost,
                 data: "key=" + key + "&sig=" + "avatarupload:true" + "&submit=Change Settings",
-            }).done(function(response) {
+            }).done(function() {
                 $("#server_message").html("Uploading...");
                 $.ajax( {
                     url: _AVATARDOMAIN_ + '/upload-v2.php',
@@ -737,7 +731,6 @@ function addAccountSwitcher(accounts) {
 // --- Quick topic functions ---
 // Add formatting tags (<b>, <i>, etc) to message on button click
 function addQuickTag(msgAreaEdit) {
-    var msgAreaEdit = ;
     var currTag = $(this);
     var tagStart = '<' + this.name + '>';
     var tagEnd = '</' + this.name + '>';
@@ -830,8 +823,11 @@ if(jQuery) {
     var _AVATARDOMAIN_ = 'http://avatarfaqs.pcriot.com/'; //Moved up here for ease in changing if necessary
     var messageDisplayTop = ($('.msg_infobox').css('display') === 'block'); // Record whether they're using message display top or not
 
+    addSettingsPageLink();
+
     if (onSettingsPage()) {
         createSettingsPage(_SETTINGS_, _USER_, _AVATARDOMAIN_);
+        addSigImportExport(_SETTINGS_);
 
         addAvatarUploadHandlers(_USER_, _AVATARDOMAIN_);
         addSigChangeHandlers(_SETTINGS_);
@@ -845,7 +841,6 @@ if(jQuery) {
         $(function() {
             $("#xfaqs-tabs").tabs();
         });
-        // End of settings page
     }
 
     // TODO: only run other functions on the pages they are needed?
@@ -883,7 +878,7 @@ if(jQuery) {
         addAccountSwitcher(_SETTINGS_.accounts);
 
     if (_SETTINGS_.settings[0].enableRotatingSigs)
-        addRandomSigToPost(_SETTINGS_.signatures)
+        addRandomSigToPost(_SETTINGS_.signatures);
 
     if (_SETTINGS_.settings[0].enableHotkeys) {
         $("input[value='Post Message']").attr("accesskey", "z");
