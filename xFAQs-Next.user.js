@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         xFAQs-Next
 // @namespace    xfaqs
-// @version      0.1.6.4
+// @version      0.2
 // @description  xFAQs For the New Message Board Beta
 // @author       @Kraust / Judgmenl
 // @match        http://*.gamefaqs.com/*
@@ -14,9 +14,6 @@
 // TODOs:
 // 3. Get the "MASTER" User Variable to work in all cases
 // 2. Settings Page (In the same Style as xfaqs does now) - Partial}
-
-
-
 
 // Note: jQuery is provided by GameFAQs by default. I will be using it a lot in this code.
 
