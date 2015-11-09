@@ -132,7 +132,8 @@ function loadSettingsCheckboxes(_SETTINGS_) {
 }
 
 // Saves settings from the general settings tab
-function saveSettingsCheckboxes(_SETTINGS_) {
+function saveSettingsCheckboxes(e) {
+    var _SETTINGS_ = e.data;
     _SETTINGS_.settings[0].enableAMP = $('#enableAMP').is(":checked");
     _SETTINGS_.settings[0].enablePopular = $('#enablePopular').is(":checked");
     _SETTINGS_.settings[0].searchTopics = $('#searchTopics').is(":checked");
@@ -178,10 +179,10 @@ function createSettingsPage(_SETTINGS_, _USER_, _AVATARDOMAIN_) {
                         "<li class='cnav_item' style='border-radius: 5px; cursor: pointer;'><a href='#tabs-6'>About</a></li>" +
                     "</ul>" +
 
-                    "<div id='news' style='padding-top:20px'></div>" +
+                    "<div id='news' style='padding-top:20px; padding-left:10px'></div>" +
 
                     "<div id='settings' style='padding-top:20px'>" +
-                        "<table class='contrib'>" +
+                        "<table style='margin-bottom: none' class='contrib'>" +
                             "<tr><th colspan='2'>General Settings</th></tr>" +
                             "<tr><td style='width:50%'>Popular Topics in Board Navigation</td><td><input type='checkbox' id='enablePopular'></td></tr>" +
                             "<tr><td style='width:50%'>AMP in Board Navigation</td><td><input type='checkbox' id='enableAMP'></td></tr>" +
@@ -697,7 +698,7 @@ function loginToAccount(account) {
 
 // Adds the account switcher link to top right of page
 function addAccountSwitcher(accounts) {
-    $(".masthead_user").append("<a href='#' id='account-switch'>Account Switcher</a>");
+    $(".masthead_user:last").append("<a href='#' id='account-switch'>Account Switcher</a>");
 
     $("#account-switch").click(function() {
 
@@ -727,7 +728,8 @@ function addAccountSwitcher(accounts) {
 
 // --- Quick topic functions ---
 // Add formatting tags (<b>, <i>, etc) to message on button click
-function addQuickTag(msgAreaEdit) {
+function addQuickTag(e) {
+    var msgAreaEdit = e.data;
     var currTag = $(this);
     var tagStart = '<' + this.name + '>';
     var tagEnd = '</' + this.name + '>';
@@ -772,7 +774,7 @@ function addQuickTopic() {
 
     $("#topicToggle").click(function() {
         if ($('#quickTopic').length) { // Clicking quick topic while popup is open should close it
-            $("#quickTopic").remove();
+            $('#quickTopic').remove();
             return;
         }
 
@@ -804,7 +806,7 @@ function addQuickTopic() {
                         '</div>';
 
         $("body").append(topicForm);
-        $(".tagbuttons input").click($('quickTopicPost')[0], addQuickTag);
+        $(".tagbuttons input").click($('#quickTopicPost')[0], addQuickTag);
 
         $("#qt-close").click(function() {
             $("#quickTopic").remove();
