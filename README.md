@@ -1,25 +1,23 @@
-# xFAQs-Next
-xFAQs For the New Message Board Beta
-
-Note: Please use the *[Allman Style](http://en.wikipedia.org/wiki/Indent_style#Allman_style)* of Indendting.
-I am trying to convert the code from Kernel to Allman because Allman is more readable.
-
-That will probably be included in a style-guide once I get this set up.
-
 # What is xFAQs-Next?
 
-xFAQs next is my (slow) port of xFAQs into the open domain (again). This is going to port the existing Firefox and Chrome addons into a UserScript so I can stop being an asshole with releases.
+xFAQs-next is a port of xFAQs from Firefox / Chrome extensions into an open domain userscript.
 
-The secondary goal is to port the current code over to the current Message Board engine.
+The current goal is to restore all functionality of xFAQs from before the changes to the message board engine.  Other side goals include cleaning up the code and possibly adding new functionality if ideas come up.
 
-# Pre-merge Information.
+# Repository Contents
 
-I will provide TWO items in this repository for the time being.
+- xFAQs-Next.user.js: The xFAQs script itself.  If you're going to make changes to the userscript, you're probably making them in here.
+- upload-v2.php: Server-side code for handling avatar display and upload.
+- legacy: A directory containing the old xFAQs code from its days as a browser extension.  If you want to port a feature over, look in here for code you can copy across.
+- news.html: An html snippet that is displayed as news on the xfaqs settings page.  Use this to describe changes you make when releasing a new version.
 
-1. A release of the current xFAQs version (Chrome / Firefox)
-2. My ongoing port of xFAQs to a UserScript.
+# Style Guidelines
 
-Any serious modification to some of the algorithms I use (mainly the Avatars-Algorithm) should definitely be addressed by me before I'd even consider adding it. All of the other stuff is fair game with a few exceptions.
+- 4 spaces for indentation.  Not tabs.  Not 8 spaces.  Your editor may have the ability to convert tabs into spaces automatically.
+- No trailing whitespace.  No lines containing only whitespace.  Don't include excessive amounts of whitespace within lines.
+- K&R indentation. https://en.wikipedia.org/wiki/Indent_style#K.26R_style
+- Semicolons at the end of lines;
+- Prefer single quotes for strings unless this would cause needless effort put into escaping the ' character within the string itself.
+- lowercase-with-hyphens for class and id of HTML elements.  You can't always abide by this since gfaqs gets it wrong, but use this for elements that xFAQs inserts.
 
-1. Features should be togglable on the Settings page.
-2. Badges may have to be removed, or heavily modified.
+And yes, I know a lot of the code violates some of these guidelines.  I can only clean up so much of it at a time.
