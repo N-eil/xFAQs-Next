@@ -1,23 +1,17 @@
 # What is xFAQs-Next?
 
-xFAQs-next is a port of xFAQs from Firefox / Chrome extensions into an open domain userscript.
+xFAQs-Next is a userscript to enhance the gamefaqs message boards by providing features such as rotating sigs, quick topic creation, avatars, a quick account switcher, and so on.  If you're familiar with xFAQs, this is essentially the new version of it after the original creator left gamefaqs.  Other similar extensions you may have heard of / used are Gameweasel and gamefox, both of which are no longer maintained and may stop working as the site updates.  So why not switch over?
 
-The current goal is to restore all functionality of xFAQs from before the changes to the message board engine.  Other side goals include cleaning up the code and possibly adding new functionality if ideas come up.
+# Install instructions
 
-# Repository Contents
+Since xFAQs-Next is a userscript, first you will need an extension that allows you to install userscripts.  Firefox users should get [Greasemonkey](https://addons.mozilla.org/en-us/firefox/addon/greasemonkey/), Chrome users should get [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=en).  Other browsers, I'm not sure what the extension is called but a quick google search should find something.  Unfortunately I don't think it will work with any version of IE, if you're using that.
 
-- xFAQs-Next.user.js: The xFAQs script itself.  If you're going to make changes to the userscript, you're probably making them in here.
-- upload-v2.php: Server-side code for handling avatar display and upload.
-- legacy: A directory containing the old xFAQs code from its days as a browser extension.  If you want to port a feature over, look in here for code you can copy across.
-- news.html: An html snippet that is displayed as news on the xfaqs settings page.  Use this to describe changes you make when releasing a new version.
+Once you have that extension installed, just click [here](https://github.com/N-eil/xFAQs-Next/raw/master/xFAQs-Next.user.js), which should bring up a page asking to confirm installation.  Say yes, and you're done.  Nice and simple.  The script will update automatically when new features are added, so you won't need to worry about constantly checking back for changes.
 
-# Style Guidelines
+# Usage
 
-- 4 spaces for indentation.  Not tabs.  Not 8 spaces.  Your editor may have the ability to convert tabs into spaces automatically.
-- No trailing whitespace.  No lines containing only whitespace.  Don't include excessive amounts of whitespace within lines.
-- K&R indentation. https://en.wikipedia.org/wiki/Indent_style#K.26R_style
-- Semicolons at the end of lines;
-- Prefer single quotes for strings unless this would cause needless effort put into escaping the ' character within the string itself.
-- lowercase-with-hyphens for class and id of HTML elements.  You can't always abide by this since gfaqs gets it wrong, but use this for elements that xFAQs inserts.
+After installing the userscript, there will be a link to the settings page added to the top right of every gamefaqs page, beside the link to your user profile.  Features start off disabled, so make sure to take a look at the settings page and enable the ones you want to use!
 
-And yes, I know a lot of the code violates some of these guidelines.  I can only clean up so much of it at a time.
+
+
+If you have any difficulties installing the script, questions to ask, comments to make, etc, stop by the [help board](http://www.gamefaqs.com/boards/565885-).
