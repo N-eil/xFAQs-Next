@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         xFAQs-Next
 // @namespace    xfaqs
-// @version      0.2
+// @version      0.2.1
 // @description  xFAQs For the New Message Board Beta
 // @author       @Kraust / Judgmenl
 // @match        http://*.gamefaqs.com/*
@@ -359,7 +359,7 @@ function addSigChangeHandlers(_SETTINGS_) {
 
     function sigDeleteCallback($entry, index) {
         $entry.nextUntil('.signature-header-row').addBack().remove();
-        _SETTINGS_.signatures.splice((index-1), 1);
+        _SETTINGS_.signatures.splice(index, 1);
         localStorage.setItem("_SETTINGS_", JSON.stringify(_SETTINGS_));
     }
 
