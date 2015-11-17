@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         xFAQs-Next
 // @namespace    xfaqs
-// @version      0.2.1
+// @version      0.2.2
 // @description  xFAQs For the New Message Board Beta
 // @author       @Kraust / Judgmenl
 // @match        http://*.gamefaqs.com/*
@@ -635,7 +635,7 @@ function addAvatarUploadHandlers(_USER_, _AVATARDOMAIN_) {
                     contentType: false,
                 }).done(function() {
                     restoreSig(sigpost, key, sig);
-                    location.reload(true);
+                    $("#server_message").html("Avatar uploaded successfully.  Refresh to view changes.  If this is your first time uploading an avatar on this account, it may not be visible for about an hour.");
                 }).fail(function() {
                     restoreSig(sigpost, key, sig);
                     $("#server_message").html("Avatar not uploaded to avatarfaqs domain. Service may be unavailable.");
