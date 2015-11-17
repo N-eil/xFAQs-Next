@@ -567,12 +567,14 @@ function renderAvatars(avatarPlacement, messageDisplayTop, _AVATARDOMAIN_) {
 function addAvatarUploadHandlers(_USER_, _AVATARDOMAIN_) {
 
     // Utility function to restore sig after it is changed during upload
-    function restoreSig(url, key, sig) {
+    function restoreSig(url, key, sig, serverMessage) {
         $.ajax({
             type: "POST",
             url: url,
             data: "key=" + key + "&sig=" + sig + "&submit=Change Settings",
-        });
+        }).always(function() {
+			$("#server_message").html(serverMessage);
+		});
     }
 
     // Verify avatar dimensions, filetype, etc when selecting file to upload
@@ -634,11 +636,9 @@ function addAvatarUploadHandlers(_USER_, _AVATARDOMAIN_) {
                     processData: false,
                     contentType: false,
                 }).done(function() {
-                    restoreSig(sigpost, key, sig);
-                    $("#server_message").html("Avatar uploaded successfully.  Refresh to view changes.  If this is your first time uploading an avatar on this account, it may not be visible for about an hour.");
+                    restoreSig(sigpost, key, sig, "Avatar uploaded successfully.  Refresh to view changes.  If this is your first time uploading an avatar on this account, it may not be visible for about an hour.");
                 }).fail(function() {
-                    restoreSig(sigpost, key, sig);
-                    $("#server_message").html("Avatar not uploaded to avatarfaqs domain. Service may be unavailable.");
+                    restoreSig(sigpost, key, sig, "Avatar not uploaded to avatarfaqs domain. Service may be unavailable.");
                 });
             });
         });
