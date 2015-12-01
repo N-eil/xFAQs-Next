@@ -71,6 +71,7 @@ function getSettings() {
                     "enableImages": false,
                     "enableYoutube": false,
                     "msgBelowLeftOfPost": false,
+                    "hideSigs": false,
                     "enableAvatars": "disabled",
                     "enableAccountSwitcher": false,
                     "enableRotatingSigs": false,
@@ -124,6 +125,7 @@ function loadSettingsCheckboxes(_SETTINGS_) {
     $("#enableImages").prop('checked', _SETTINGS_.settings[0].enableImages);
     $("#enableYoutube").prop('checked', _SETTINGS_.settings[0].enableYoutube);
     $("#msgBelowLeftOfPost").prop('checked', _SETTINGS_.settings[0].msgBelowLeftOfPost);
+    $("#hide-sigs").prop('checked', _SETTINGS_.settings[0].hideSigs);
     $("#enableAvatars").val(_SETTINGS_.settings[0].enableAvatars);
     $("#enableAccountSwitcher").prop('checked', _SETTINGS_.settings[0].enableAccountSwitcher);
     $("#enableRotatingSigs").prop('checked', _SETTINGS_.settings[0].enableRotatingSigs);
@@ -143,6 +145,7 @@ function saveSettingsCheckboxes(e) {
     _SETTINGS_.settings[0].enableImages = $('#enableImages').is(":checked");
     _SETTINGS_.settings[0].enableYoutube = $('#enableYoutube').is(":checked");
     _SETTINGS_.settings[0].msgBelowLeftOfPost = $('#msgBelowLeftOfPost').is(":checked");
+	_SETTINGS_.settings[0].hideSigs = $('#hide-sigs').is(":checked");
     _SETTINGS_.settings[0].enableAvatars = $('#enableAvatars').val();
     _SETTINGS_.settings[0].enableAccountSwitcher = $('#enableAccountSwitcher').is(":checked");
     _SETTINGS_.settings[0].enableRotatingSigs = $('#enableRotatingSigs').is(":checked");
@@ -193,6 +196,7 @@ function createSettingsPage(_SETTINGS_, _USER_, _AVATARDOMAIN_) {
                             "<tr><td style='width:50%'>Embedded Images</td><td><input type='checkbox' id='enableImages'></td></tr>" +
                             "<tr><td style='width:50%'>Embedded Youtube</td><td><input type='checkbox' id='enableYoutube'></td></tr>" +
                             "<tr><td style='width:50%'>quote, edit, ect. in Message Display Left</td><td><input type='checkbox' id='msgBelowLeftOfPost'></td></tr>" +
+                            "<tr><td style='width:50%'>Hide signatures</td><td><input type='checkbox' id='hide-sigs'></td></tr>" +
                             "<tr><td style='width:50%'>GameFAQs Avatars</td><td>" +
                             "<select id='enableAvatars'>" +
                                 "<option value='disabled'>Disabled</option>" +
@@ -446,9 +450,10 @@ function embedVideos(selectors) {
 
         })
         .one('click', function() { // Only set the source once to prevent videos from restarting when hidden and then reopened
-            $videoDiv.find('video').attr('src', href);
+            $videoDiv.find('iframe').attr('src', 'http://www.youtube.com/embed/' + id);
+            $toggleButton.after($videoDiv);
         });
-        $(this).after($videoDiv).after($toggleButton);
+        $(this).after($toggleButton);
     });
 }
 
@@ -646,7 +651,7 @@ function addAvatarUploadHandlers(_USER_, _AVATARDOMAIN_) {
 }
 
 
-// --- Rotating sigs stuff ---
+// --- Sig stuff ---
 // Adds rotating sigs to your posts in topics
 function addRandomSigToPost(sigList) {
     var board = $('.page-title').html().trim();
@@ -664,6 +669,22 @@ function addRandomSigToPost(sigList) {
         }
     }
 }
+
+// Pass in the post html, splits the sig from the message 
+function splitSig(html) {
+    var splitMsg = {'msg' : html.split('<br>---<br>')};
+    splitMsg.sig = splitMsg.msg.length > 1 ? splitMsg.msg.pop() : '';
+    splitMsg.msg = splitMsg.msg.join('<br>---<br>');
+    return splitMsg;
+}
+
+// Hides all signatures
+function hideSigs() {
+    $('.msg_body').html(function(index, oldHtml) {
+        return splitSig(oldHtml).msg;
+    });
+}
+
 
 // --- Account switcher stuff ---
 // Logs in to an account using account.name and account.pass
@@ -843,6 +864,9 @@ if(jQuery) {
     }
 
     // TODO: only run other functions on the pages they are needed?
+	if(_SETTINGS_.settings[0].hideSigs)
+        hideSigs();
+		
     if(_SETTINGS_.settings[0].searchTopics)
         addTopicSearchBar();
 
