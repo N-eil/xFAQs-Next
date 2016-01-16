@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         xFAQs-Next
 // @namespace    xfaqs
-// @version      0.2.2
+// @version      0.2.3
 // @description  xFAQs For the New Message Board Beta
 // @author       @Kraust / Judgmenl
 // @match        http://*.gamefaqs.com/*
@@ -175,11 +175,11 @@ function createSettingsPage(_SETTINGS_, _USER_, _AVATARDOMAIN_) {
                         "<li class='cnav_item' style='border-radius: 5px; cursor: pointer;'><a href='#news'>News</a></li>" +
                         "<li class='cnav_item' style='border-radius: 5px; cursor: pointer;'><a href='#settings'>General Settings</a></li>" +
                         "<li class='cnav_item' style='border-radius: 5px; cursor: pointer;'><a href='#avatars'>GameFAQs Avatars</a></li>" +
-                        "<li class='cnav_item' style='border-radius: 5px; cursor: pointer;'><a href='#tabs-3'>User Highlighting</a></li>" +
-                        "<li class='cnav_item' style='border-radius: 5px; cursor: pointer;'><a href='#tabs-4'>Ignore List+</a></li>" +
+                        //"<li class='cnav_item' style='border-radius: 5px; cursor: pointer;'><a href='#tabs-3'>User Highlighting</a></li>" +
+                        //"<li class='cnav_item' style='border-radius: 5px; cursor: pointer;'><a href='#tabs-4'>Ignore List+</a></li>" +
                         "<li class='cnav_item' style='border-radius: 5px; cursor: pointer;'><a href='#tab-rotating-sigs'>Rotating Signatures</a></li>" +
                         "<li class='cnav_item' style='border-radius: 5px; cursor: pointer;'><a href='#tab-account-switcher'>Account Switcher</a></li>" +
-                        "<li class='cnav_item' style='border-radius: 5px; cursor: pointer;'><a href='#tabs-6'>About</a></li>" +
+                        //"<li class='cnav_item' style='border-radius: 5px; cursor: pointer;'><a href='#tabs-6'>About</a></li>" +
                     "</ul>" +
 
                     "<div id='news' style='padding-top:20px; padding-left:10px'></div>" +
@@ -670,7 +670,7 @@ function addRandomSigToPost(sigList) {
     }
 }
 
-// Pass in the post html, splits the sig from the message 
+// Pass in the post html, splits the sig from the message
 function splitSig(html) {
     var splitMsg = {'msg' : html.split('<br>---<br>')};
     splitMsg.sig = splitMsg.msg.length > 1 ? splitMsg.msg.pop() : '';
@@ -840,7 +840,7 @@ if(jQuery) {
 
     var _SETTINGS_ = getSettings(); // All user settings are stored in _SETTINGS_
     var _USER_ = $(".welcome").text().slice(0, - 1).replace(/ /g,"_"); // Use _USER_ whenever you need the user's username
-    var _AVATARDOMAIN_ = 'http://avatarfaqs.pcriot.com/'; //Moved up here for ease in changing if necessary
+    var _AVATARDOMAIN_ = 'http://avatarfaqs.hol.es/'; //Moved up here for ease in changing if necessary
     var messageDisplayTop = ($('.msg_infobox').css('display') === 'block'); // Record whether they're using message display top or not
 
     addSettingsPageLink();
@@ -866,7 +866,7 @@ if(jQuery) {
     // TODO: only run other functions on the pages they are needed?
 	if(_SETTINGS_.settings[0].hideSigs)
         hideSigs();
-		
+
     if(_SETTINGS_.settings[0].searchTopics)
         addTopicSearchBar();
 
