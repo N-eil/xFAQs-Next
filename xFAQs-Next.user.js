@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         xFAQs-Next
 // @namespace    xfaqs
-// @version      0.2.3
+// @version      0.2.4
 // @description  xFAQs For the New Message Board Beta
 // @author       @Kraust / Judgmenl
 // @match        http://*.gamefaqs.com/*
@@ -450,7 +450,7 @@ function embedVideos(selectors) {
 
         })
         .one('click', function() { // Only set the source once to prevent videos from restarting when hidden and then reopened
-            $videoDiv.find('iframe').attr('src', 'http://www.youtube.com/embed/' + id);
+            $videoDiv.find('video').attr('src', href);
             $toggleButton.after($videoDiv);
         });
         $(this).after($toggleButton);
@@ -475,8 +475,9 @@ function embedYoutube() {
         })
         .one('click', function() { // Only set the source once to prevent videos from restarting when hidden and then reopened
             $videoDiv.find('iframe').attr('src', 'http://www.youtube.com/embed/' + id);
+            $toggleButton.after($videoDiv);
         });
-        $(this).after($videoDiv).after($toggleButton);
+        $(this).after($toggleButton);
     });
 }
 
