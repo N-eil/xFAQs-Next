@@ -724,8 +724,8 @@ function addAccountSwitcher(accounts) {
 
     $("#account-switch").click(function() {
 
-        var topicForm = "<div id='account-switch-panel' class='reg_dialog' style='position:fixed;left:25%;top:10%;width:50%'>" +
-                            "<div style='padding:10px;'><h3>Account Switcher</h3>" +
+        var topicForm = "<div id='account-switch-panel' class='reg_dialog' style='position:fixed;left:25%;top:10%;width:50%;max-height:50%;overflow:auto'>" +
+                            "<div style='padding:10px;'><h3>Account Switcher <button class='btn' id='account-switch-close' style='float:right'>Close</button></h3>" +
                             "<p>";
 
         topicForm += "<table>";
@@ -736,9 +736,8 @@ function addAccountSwitcher(accounts) {
 
         topicForm += "</table>";
 
-        topicForm += "<br><button class='btn' id='account-switch-close'>Close</button>" +
-                        "</p>" +
-                        "</div></div>";
+        topicForm +=    "</p>" +
+                    "</div></div>";
 
         $("body").append(topicForm);
         $("#account-switch-panel .switch").click(function() {loginToAccount(accounts[$('#account-switch-panel .switch').index(this)]);});
