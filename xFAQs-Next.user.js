@@ -104,7 +104,7 @@ function getSettings() {
 
 // Adds the link to the settings page in the top right
 function addSettingsPageLink() {
-    $(".masthead_user:last").prepend("<span class='masthead_mygames_drop'><a href='/boards/user.php?settings=1'>xFAQs Settings <i class='icon icon-cog'></i>" +
+    $(".masthead_user:last").prepend("<span class='masthead_mygames_drop'><a href='/boards/user.php?settings=1'>xFAQs Settings <i class='fa fa-cog'></i>" +
                                 "</a><ul class='masthead_mygames_subnav' style='width:200px;left:-1px;'><li class='masthead_mygames_subnav_item'>" +
                                 "<a href='/boards/565885-blood-money/'>xFAQs Help</a></li></ul></span> ");
 }
@@ -190,7 +190,7 @@ function createSettingsPage(_SETTINGS_, _USER_, _AVATARDOMAIN_) {
                             "<tr><td style='width:50%'>Popular Topics in Board Navigation</td><td><input type='checkbox' id='enablePopular'></td></tr>" +
                             "<tr><td style='width:50%'>AMP in Board Navigation</td><td><input type='checkbox' id='enableAMP'></td></tr>" +
                             "<tr><td style='width:50%'>\"Search Topics\" at top of topic list.</td><td><input type='checkbox' id='searchTopics'></td></tr>" +
-                            "<tr><td style='width:50%'>Message Filtering <i class='icon icon-question-sign' title='Note: filters only work on retro skins if Message Poster Display: Above Message is selected in the Advanced Site Settings'></i></td><td><input type='checkbox' id='enableFilter'></td></tr>" +
+                            "<tr><td style='width:50%'>Message Filtering <i class='fa fa-question' title='Note: filters only work on retro skins if Message Poster Display: Above Message is selected in the Advanced Site Settings'></i></td><td><input type='checkbox' id='enableFilter'></td></tr>" +
                             "<tr><td style='width:50%'>Embedded Webm</td><td><input type='checkbox' id='enableWebm'></td></tr>" +
                             "<tr><td style='width:50%'>Embedded Gifv</td><td><input type='checkbox' id='enableGifv'></td></tr>" +
                             "<tr><td style='width:50%'>Embedded Images</td><td><input type='checkbox' id='enableImages'></td></tr>" +
@@ -206,7 +206,7 @@ function createSettingsPage(_SETTINGS_, _USER_, _AVATARDOMAIN_) {
                             "<tr><td style='width:50%'>Account Switcher</td><td><input type='checkbox' id='enableAccountSwitcher'></td></tr>" +
                             "<tr><td style='width:50%'>Rotating Sigs</td><td><input type='checkbox' id='enableRotatingSigs'></td></tr>" +
                             "<tr><td style='width:50%'>Quick Topic</td><td><input type='checkbox' id='enableQuickTopic'></td></tr>" +
-                            "<tr><td style='width:50%'>Posting Hotkeys <i class='icon icon-question-sign' title='Alt+Z to post, Alt+X to preview. This may conflict with other hotkey scripts.'></i></td><td><input type='checkbox' id='enableHotkeys'></td></tr>" +
+                            "<tr><td style='width:50%'>Posting Hotkeys <i class='fa fa-question' title='Alt+Z to post, Alt+X to preview. This may conflict with other hotkey scripts.'></i></td><td><input type='checkbox' id='enableHotkeys'></td></tr>" +
                             "<tr><td colspan='2'><input type='submit' id='update-general' class='btn' value='Update xFAQs Settings'></td></tr>" +
                         "</table>" +
                     "</div>" +
@@ -418,7 +418,7 @@ function loadNews() {
 // Embed images in posts
 function addTtiImages() {
     var $buttonTemplate = $("<button class='btn' style='margin-left:5px;padding-left:3px;padding-right:3px;padding-top:1px;padding-bottom:1px;'>" +
-                        "<i class='icon icon-picture'></i></button>");
+                        "<i class='fa fa-image'></i></button>");
     var $ttiTemplate = $('<div style="display:none"><img alt="TTI Image"></div>');
 
     $('.msg_body a[href$=".gif"], .msg_body a[href$=".jpg"], .msg_body a[href$=".png"], .msg_body a[href$=".bmp"], .msg_body a[href$=".jpeg"]').each(function() {
@@ -435,7 +435,7 @@ function addTtiImages() {
 // Embed things that can fit as a src for a <video> tag, plus .gifv in posts
 function embedVideos(selectors) {
     var $buttonTemplate = $('<button class="btn" style="margin-left:5px;padding-left:3px;padding-right:3px;padding-top:1px;padding-bottom:1px;">' +
-                        '<i class="icon icon-play-circle"></i></button>');
+                        '<i class="fa fa-play-circle"></i></button>');
     var $videoTemplate = $('<div style="display:none"> <video controls loop autoplay> </video> </div>');
 
     $(selectors).each(function() {
@@ -462,7 +462,7 @@ function embedYoutube() {
     // https://xkcd.com/1171/
     var ytregex = /(?:http|https|)(?::\/\/|)(?:www.|)(?:youtu\.be\/|youtube\.com(?:\/embed\/|\/v\/|\/watch\?v=|\/ytscreeningroom\?v=|\/feeds\/api\/videos\/|\/user\S*[^\w\-\s]|\S*[^\w\-\s]))([\w\-]{11})[a-z0-9;:@#?&%=+\/\$_.-]*/;
     var $buttonTemplate = $('<button class="btn" style="margin-left:5px;padding-left:3px;padding-right:3px;padding-top:1px;padding-bottom:1px;">' +
-                        '<i class="icon icon-play-circle"></i></button>');
+                        '<i class="fa fa-play-circle"></i></button>');
     var $videoTemplate = $('<div style="display:none"> <iframe width="720" height="480"frameborder="0" allowfullscreen></iframe> </div>');
 
     $('td.msg a').each(function() {
