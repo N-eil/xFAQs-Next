@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         xFAQs-Next
 // @namespace    xfaqs
-// @version      0.2.5
+// @version      0.3
 // @description  xFAQs For the New Message Board Beta
 // @author       @Kraust / Judgmenl
-// @match        http://*.gamefaqs.com/*
+// @match        *://*.gamefaqs.com/*
 // @grant        none
 // @noframes
 // ==/UserScript==
@@ -71,7 +71,6 @@ function getSettings() {
                     "enableImages": false,
                     "enableYoutube": false,
                     "msgBelowLeftOfPost": false,
-                    "hideSigs": false,
                     "enableAvatars": "disabled",
                     "enableAccountSwitcher": false,
                     "enableRotatingSigs": false,
@@ -125,7 +124,6 @@ function loadSettingsCheckboxes(_SETTINGS_) {
     $("#enableImages").prop('checked', _SETTINGS_.settings[0].enableImages);
     $("#enableYoutube").prop('checked', _SETTINGS_.settings[0].enableYoutube);
     $("#msgBelowLeftOfPost").prop('checked', _SETTINGS_.settings[0].msgBelowLeftOfPost);
-    $("#hide-sigs").prop('checked', _SETTINGS_.settings[0].hideSigs);
     $("#enableAvatars").val(_SETTINGS_.settings[0].enableAvatars);
     $("#enableAccountSwitcher").prop('checked', _SETTINGS_.settings[0].enableAccountSwitcher);
     $("#enableRotatingSigs").prop('checked', _SETTINGS_.settings[0].enableRotatingSigs);
@@ -145,7 +143,6 @@ function saveSettingsCheckboxes(e) {
     _SETTINGS_.settings[0].enableImages = $('#enableImages').is(":checked");
     _SETTINGS_.settings[0].enableYoutube = $('#enableYoutube').is(":checked");
     _SETTINGS_.settings[0].msgBelowLeftOfPost = $('#msgBelowLeftOfPost').is(":checked");
-	_SETTINGS_.settings[0].hideSigs = $('#hide-sigs').is(":checked");
     _SETTINGS_.settings[0].enableAvatars = $('#enableAvatars').val();
     _SETTINGS_.settings[0].enableAccountSwitcher = $('#enableAccountSwitcher').is(":checked");
     _SETTINGS_.settings[0].enableRotatingSigs = $('#enableRotatingSigs').is(":checked");
@@ -196,7 +193,6 @@ function createSettingsPage(_SETTINGS_, _USER_, _AVATARDOMAIN_) {
                             "<tr><td style='width:50%'>Embedded Images</td><td><input type='checkbox' id='enableImages'></td></tr>" +
                             "<tr><td style='width:50%'>Embedded Youtube</td><td><input type='checkbox' id='enableYoutube'></td></tr>" +
                             "<tr><td style='width:50%'>quote, edit, ect. in Message Display Left</td><td><input type='checkbox' id='msgBelowLeftOfPost'></td></tr>" +
-                            "<tr><td style='width:50%'>Hide signatures</td><td><input type='checkbox' id='hide-sigs'></td></tr>" +
                             "<tr><td style='width:50%'>GameFAQs Avatars</td><td>" +
                             "<select id='enableAvatars'>" +
                                 "<option value='disabled'>Disabled</option>" +
@@ -679,14 +675,6 @@ function splitSig(html) {
     return splitMsg;
 }
 
-// Hides all signatures
-function hideSigs() {
-    $('.msg_body').html(function(index, oldHtml) {
-        return splitSig(oldHtml).msg;
-    });
-}
-
-
 // --- Account switcher stuff ---
 // Logs in to an account using account.name and account.pass
 function loginToAccount(account) {
@@ -864,9 +852,6 @@ if(jQuery) {
     }
 
     // TODO: only run other functions on the pages they are needed?
-	if(_SETTINGS_.settings[0].hideSigs)
-        hideSigs();
-
     if(_SETTINGS_.settings[0].searchTopics)
         addTopicSearchBar();
 
